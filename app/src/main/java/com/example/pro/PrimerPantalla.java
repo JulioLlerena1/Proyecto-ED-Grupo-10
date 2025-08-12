@@ -29,7 +29,7 @@ public class PrimerPantalla extends AppCompatActivity {
     public void ingresar(View view){
 
         //Mostrar la activity de mapa
-        Intent intent=new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }
