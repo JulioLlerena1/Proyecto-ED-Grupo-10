@@ -29,6 +29,8 @@ import modelo.DynamicGraph;
 
 public class MainActivity extends AppCompatActivity {
     private MapView mapView;
+    public static DynamicGraph graph;
+
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
     @Override
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         GeoPoint daxing = daxingAeropuerto.toGeoPoint();
 
 
-        DynamicGraph graph = new DynamicGraph(true);
+        graph = new DynamicGraph(false);
         graph.addVertex(laxAeropuerto);
         graph.addVertex(quitoAeropuerto);
         graph.addVertex(frankfurtAeropuerto);
@@ -120,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
             marker.setPosition(punto);
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setTitle(a.getNombreCompleto());
-
-
             // Listener para click
             marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
                 @Override
@@ -130,12 +130,8 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             });
-
-
             mapView.getOverlays().add(marker);
-
         }
-
 
 
         // Crear líneas (aristas del grafo) entre aeropuertos

@@ -5,6 +5,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,10 @@ public class DynamicGraph<V, E> {
     public DynamicGraph(boolean directed) {
         this.vertices = new ArrayList<>();
         this.directed = directed;
+    }
+
+    public List<Vertex<V, E>> getVertices() {
+        return vertices;
     }
 
     // 1. Find vertex by content
@@ -66,36 +71,69 @@ public class DynamicGraph<V, E> {
         }
         return true;
     }
-    
-    
-    
-    public void dijkstra(V startContent) {
+
+
+
+    public List<Vertex<V, E>> dijkstra(V startContent, V endContent) {
         Vertex<V, E> start = findVertex(startContent);
-        if (start == null) return;
+        Vertex<V, E> end = findVertex(endContent);
+        if (start == null || end == null) return Collections.emptyList();
+
+        // Reiniciar valores antes de ejecutar
+        for (Vertex<V, E> v : vertices) {
+            v.setDistance(Double.POSITIVE_INFINITY);
+            v.setPredecessor(null);
+            v.isVisited = false;
+        }
+
         start.setDistance(0);
+
         // PriorityQueue by distance
         PriorityQueue<Vertex<V, E>> queue = new PriorityQueue<>(
-                (a,b) -> { return  Double.compare(a.getDistance(), b.getDistance());  }
+                (a, b) -> Double.compare(a.getDistance(), b.getDistance())
         );
         queue.add(start);
 
         while (!queue.isEmpty()) {
             Vertex<V, E> u = queue.poll();
-            if(!u.isVisited){
-                for (Edge<V, E> edge : u.getEdges()) {
-                    Vertex<V, E> v = edge.target;
-                    double newDist = u.getDistance() + edge.weight;
-                    if (newDist < v.getDistance()) {
-                        v.setDistance(newDist);
-                        v.setPredecessor(u);
-                        queue.add(v);
-                    }
+
+            if (u.isVisited) continue;
+            u.isVisited = true;
+
+            // Si llegamos al destino, salimos
+            if (u.equals(end)) break;
+
+            for (Edge<V, E> edge : u.getEdges()) {
+                Vertex<V, E> v = edge.target;
+                double newDist = u.getDistance() + edge.weight;
+
+                if (newDist < v.getDistance()) {
+                    v.setDistance(newDist);
+                    v.setPredecessor(u);
+                    queue.add(v);
                 }
-                u.isVisited = true;
             }
         }
+
+        // Reconstruir camino del destino al inicio
+        List<Vertex<V, E>> path = new ArrayList<>();
+        Vertex<V, E> current = end;
+        while (current != null) {
+            path.add(current);
+            current = current.getPredecessor();
+        }
+
+        Collections.reverse(path);
+
+        // Si no hay camino válido, devolver lista vacía
+        if (path.isEmpty() || !path.get(0).equals(start)) {
+            return Collections.emptyList();
+        }
+
+        return path;
     }
-    
+
+
     public void printShortestPathsFrom(V startContent) {
         Vertex<V, E> start = findVertex(startContent);
         if (start == null) {

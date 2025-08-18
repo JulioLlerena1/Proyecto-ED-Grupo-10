@@ -32,6 +32,8 @@
 
         <activity android:name=".AeropuertoInfo" />
 
+        <activity android:name=".RutaCorta" />
+
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.TreeSet;
 
 import modelo.Aeropuerto;
+import modelo.DynamicGraph;
+import modelo.Vertex;
 import modelo.Vuelo;
 
 
@@ -107,6 +110,34 @@ public class AeropuertoInfo  extends AppCompatActivity {
             row.addView(crearTextView(v.getDestino().getNombre(), false));
             row.addView(crearTextView(sdf.format(v.getHoraI()), false));
             row.addView(crearTextView(sdf.format(v.getHoraF()), false));
+
+            row.setTag(v);
+
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Vuelo vueloSeleccionado = (Vuelo) view.getTag();
+                    Aeropuerto origen = vueloSeleccionado.getPartida();
+                    Aeropuerto destino = vueloSeleccionado.getDestino();
+
+                    DynamicGraph grafo = MainActivity.graph;
+                    List<Vertex<Aeropuerto, Double>> camino = grafo.dijkstra(origen, destino);
+
+                    if (camino.isEmpty()) {
+                        Toast.makeText(AeropuertoInfo.this, "No hay ruta disponible + " + grafo.getVertices().size() , Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    ArrayList<String> codigosRuta = new ArrayList<>();
+                    for (Vertex<Aeropuerto, Double> v : camino) {
+                        codigosRuta.add(v.getValue().getCodigo());
+                    }
+
+                    Intent intent = new Intent(AeropuertoInfo.this, RutaCorta.class);
+                    intent.putStringArrayListExtra("ruta", codigosRuta);
+                    startActivity(intent);
+                }
+            });
             table.addView(row);
         }
     }

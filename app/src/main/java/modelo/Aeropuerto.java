@@ -72,4 +72,17 @@ public class Aeropuerto implements Serializable {
     public String getNombreCompleto() {
         return nombre;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Aeropuerto)) return false;
+        Aeropuerto a = (Aeropuerto) o;
+        return codigo.equalsIgnoreCase(a.codigo);
+    }
+
+    @Override
+    public int hashCode() {
+        return codigo.toLowerCase().hashCode();
+    }
 }

@@ -31,9 +31,6 @@ public class Graphs {
         s1.connect("C", "E", 10);
         s1.connect("E", "Z", 3);
 
-        // Ejecutar Dijkstra desde Vertex1
-        s1.dijkstra("A");
-
         // Mostrar caminos más cortos desde Vertex1
         s1.printShortestPathsFrom("A");
         
