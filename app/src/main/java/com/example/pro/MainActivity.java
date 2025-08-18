@@ -16,6 +16,7 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,37 +45,76 @@ public class MainActivity extends AppCompatActivity {
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
+
         // Coordenadas
-        GeoPoint usaPoint = new GeoPoint(38.9072, -77.0369); // Washington D.C., USA
-        GeoPoint ecuadorPoint = new GeoPoint(-0.1807, -78.4678); // Quito, Ecuador
+        GeoPoint daxing = new GeoPoint(39.509, 116.410); // PKX, Beijing
+        GeoPoint lax = new GeoPoint(33.9416, -118.4085); // LAX, Los Ángeles
+        GeoPoint quito = new GeoPoint(-0.1807, -78.4678); // UIO, Quito
+        GeoPoint frankfurt = new GeoPoint(50.0379, 8.5622); // FRA, Alemania
 
         // Configuración inicial del mapa (centrado en el medio)
         mapView.getController().setZoom(4.0);
         mapView.getController().setCenter(new GeoPoint(15.0, -77.0)); // Centro aproximado entre ambos
 
-        // Marcador en USA
-        Marker usaMarker = new Marker(mapView);
-        usaMarker.setPosition(usaPoint);
-        usaMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        usaMarker.setTitle("Estados Unidos");
-        mapView.getOverlays().add(usaMarker);
+        // Crear marcadores
+        Marker pkxMarker = new Marker(mapView);
+        pkxMarker.setPosition(daxing);
+        pkxMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        pkxMarker.setTitle("Beijing Daxing (PKX)");
+        mapView.getOverlays().add(pkxMarker);
 
-        // Marcador en Ecuador
-        Marker ecuadorMarker = new Marker(mapView);
-        ecuadorMarker.setPosition(ecuadorPoint);
-        ecuadorMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        ecuadorMarker.setTitle("Ecuador");
-        mapView.getOverlays().add(ecuadorMarker);
+        Marker laxMarker = new Marker(mapView);
+        laxMarker.setPosition(lax);
+        laxMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        laxMarker.setTitle("Los Ángeles (LAX)");
+        mapView.getOverlays().add(laxMarker);
 
-        // Línea entre USA y Ecuador
-        Polyline line = new Polyline();
-        List<GeoPoint> points = new ArrayList<>();
-        points.add(usaPoint);
-        points.add(ecuadorPoint);
-        line.setPoints(points);
-        line.setWidth(6f);
-        line.setColor(0xFF0000FF); // Azul
-        mapView.getOverlays().add(line);
+        Marker quitoMarker = new Marker(mapView);
+        quitoMarker.setPosition(quito);
+        quitoMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        quitoMarker.setTitle("Quito (UIO)");
+        mapView.getOverlays().add(quitoMarker);
+
+        Marker fraMarker = new Marker(mapView);
+        fraMarker.setPosition(frankfurt);
+        fraMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        fraMarker.setTitle("Frankfurt (FRA)");
+        mapView.getOverlays().add(fraMarker);
+
+// Crear líneas (aristas del grafo) entre aeropuertos
+        Polyline line1 = new Polyline();
+        line1.setPoints(Arrays.asList(lax, quito));
+        line1.setWidth(5f);
+        line1.setColor(0xFF0000FF); // Azul
+        mapView.getOverlays().add(line1);
+
+        Polyline line2 = new Polyline();
+        line2.setPoints(Arrays.asList(lax, frankfurt));
+        line2.setWidth(5f);
+        line2.setColor(0xFF00FF00); // Verde
+        mapView.getOverlays().add(line2);
+
+        Polyline line3 = new Polyline();
+        line3.setPoints(Arrays.asList(frankfurt, daxing));
+        line3.setWidth(5f);
+        line3.setColor(0xFFFF0000); // Rojo
+        mapView.getOverlays().add(line3);
+
+        Polyline line4 = new Polyline();
+        line4.setPoints(Arrays.asList(quito, daxing));
+        line4.setWidth(5f);
+        line4.setColor(0xFFFFFF00); // Amarillo
+        mapView.getOverlays().add(line4);
+
+        mapView.invalidate();
+
+
+        // Distancias en metros usando OSMDroid
+        double distLaxQuito = lax.distanceToAsDouble(quito) / 1000.0;       // km
+        double distLaxFrankfurt = lax.distanceToAsDouble(frankfurt) / 1000.0; // km
+        double distFrankfurtDaxing = frankfurt.distanceToAsDouble(daxing) / 1000.0; // km
+        double distQuitoDaxing = quito.distanceToAsDouble(daxing) / 1000.0; // km
+
     }
 
     private void requestPermissionsIfNecessary(String[] permissions) {
