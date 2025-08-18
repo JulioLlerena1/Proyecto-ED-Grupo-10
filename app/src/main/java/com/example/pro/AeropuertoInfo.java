@@ -112,10 +112,23 @@ public class AeropuertoInfo  extends AppCompatActivity {
     }
 
     private TextView crearTextView(String texto, boolean bold) {
+
         TextView tv = new TextView(this);
         tv.setText(texto);
-        if (bold) tv.setTypeface(null, Typeface.BOLD);
-        tv.setPadding(8, 8, 8, 8);
+
+        if (bold) {
+            tv.setTypeface(null, Typeface.BOLD);
+        }
+
+        tv.setPadding(16, 16, 16, 16);
+
+        TableRow.LayoutParams params = new TableRow.LayoutParams(
+                0,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1f
+        );
+        tv.setLayoutParams(params);
+
         return tv;
     }
 
