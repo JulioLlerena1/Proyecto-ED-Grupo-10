@@ -9,10 +9,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Aeropuerto {
+public class Aeropuerto implements Serializable {
     private String codigo;
     private String nombre;
     private double latitud;

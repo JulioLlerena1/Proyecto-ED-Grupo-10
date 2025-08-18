@@ -1,11 +1,13 @@
 package com.example.pro;
 
+
 import static modelo.Aeropuerto.cargarAeropuertos;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -118,8 +120,22 @@ public class MainActivity extends AppCompatActivity {
             marker.setPosition(punto);
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setTitle(a.getNombreCompleto());
+
+
+            // Listener para click
+            marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker, MapView mapView) {
+                    mostrarInformacionAeropuerto(a);
+                    return true;
+                }
+            });
+
+
             mapView.getOverlays().add(marker);
+
         }
+
 
 
         // Crear líneas (aristas del grafo) entre aeropuertos
@@ -187,6 +203,12 @@ public class MainActivity extends AppCompatActivity {
         mapView.invalidate();
 
 
+    }
+
+    private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto) {
+        Intent intent = new Intent(this, AeropuertoInfo.class);
+        intent.putExtra("aeropuerto", aeropuerto); //
+        startActivity(intent);
     }
 
 

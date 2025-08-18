@@ -29,6 +29,9 @@
 
         <!-- Otras pantallas -->
         <activity android:name=".MainActivity" />
+
+        <activity android:name=".AeropuertoInfo" />
+
     </application>
 
 </manifest>
