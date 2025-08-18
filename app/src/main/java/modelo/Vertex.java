@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Chris
  */
-class Vertex<V, E> {
+public class Vertex<V, E> {
     V value; // vertex content
     List<Edge<V, E>> edges; // outgoing edges
     double distance; // accumulated distance
@@ -25,6 +25,18 @@ class Vertex<V, E> {
         this.predecessor = null;
         this.isVisited = false;
     }
+
+    public static List<Vertex<Aeropuerto, Double>> crearVerticesDesdeAeropuertos(List<Aeropuerto> aeropuertos) {
+        List<Vertex<Aeropuerto, Double>> vertices = new ArrayList<>();
+        for (Aeropuerto a : aeropuertos) {
+            vertices.add(new Vertex<>(a));
+        }
+        return vertices;
+    }
+
+
+
+
 
     public void setDistance(double distance) {
         this.distance = distance;
