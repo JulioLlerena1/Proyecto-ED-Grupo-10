@@ -17,6 +17,13 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +36,10 @@ import modelo.DynamicGraph;
 
 public class MainActivity extends AppCompatActivity {
     private MapView mapView;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private MaterialToolbar topAppBar;
+    private ActionBarDrawerToggle toggle;
     public static DynamicGraph graph;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
@@ -43,6 +54,35 @@ public class MainActivity extends AppCompatActivity {
         Configuration.getInstance().setOsmdroidTileCache(new File(getCacheDir(), "tiles"));
 
         setContentView(R.layout.activity_main);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        topAppBar = findViewById(R.id.topAppBar);
+
+        setSupportActionBar(topAppBar);
+        toggle = new ActionBarDrawerToggle(this,
+                drawerLayout,
+                topAppBar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_item_one) {
+
+                } else if (id == R.id.nav_item_two) {
+
+                } else if (id == R.id.nav_send) {
+
+                }
+                drawerLayout.closeDrawers(); // Cierra el drawer después de la selección
+                return true;
+            }
+        });
 
         // Solicitar permisos de ubicación
         requestPermissionsIfNecessary(new String[] {
@@ -214,6 +254,15 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS_REQUEST_CODE);
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(androidx.core.view.GravityCompat.START)) {
+            drawerLayout.closeDrawer(androidx.core.view.GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
