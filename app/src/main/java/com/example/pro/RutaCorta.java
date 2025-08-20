@@ -24,7 +24,6 @@ public class RutaCorta extends AppCompatActivity {
 
     private MapView mapViewSecundario;
 
-    private Button volver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +102,7 @@ public class RutaCorta extends AppCompatActivity {
         mapViewSecundario.onPause();
     }
 
-    public void regresar(View view){
+    public void volver(View view){
         Intent intent=new Intent(this,MainActivity.class);
         startActivity(intent);
 

@@ -10,7 +10,7 @@
     </item>
 
     <item >
-        <shape android:layout_height="match_parent" android:shape="rectangle">
+        <shape android:shape="rectangle">
             <solid android:color="@color/transparente" />
             <corners android:radius="30dp" />
             <stroke android:width="3dp" android:color="@color/morado" />
