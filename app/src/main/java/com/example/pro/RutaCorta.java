@@ -1,6 +1,10 @@
 package com.example.pro;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.osmdroid.config.Configuration;
@@ -19,6 +23,8 @@ import modelo.Aeropuerto;
 public class RutaCorta extends AppCompatActivity {
 
     private MapView mapViewSecundario;
+
+    private Button volver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,4 +102,11 @@ public class RutaCorta extends AppCompatActivity {
         super.onPause();
         mapViewSecundario.onPause();
     }
+
+    public void regresar(View view){
+        Intent intent=new Intent(this,MainActivity.class);
+        startActivity(intent);
+
+    }
+
 }
