@@ -32,21 +32,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp" />
 
-            <androidx.cardview.widget.CardView
+            <Button
+                android:id="@+id/btn_ingresar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btn_ingresar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/disenioboton"
-                    android:text="Ingresar"
-                    android:textColor="#886AC8"
-                    android:textStyle="bold" />
-            </androidx.cardview.widget.CardView>
+                android:background="@drawable/disenioboton"
+                android:text="Ingresar"
+                android:textColor="#886AC8"
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
