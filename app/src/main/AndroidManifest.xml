@@ -34,6 +34,8 @@
 
         <activity android:name=".RutaCorta" />
 
+        <activity android:name=".Estadisticas" />
+
     </application>
 
 </manifest>

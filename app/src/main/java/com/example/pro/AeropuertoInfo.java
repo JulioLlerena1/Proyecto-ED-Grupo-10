@@ -29,8 +29,6 @@ import modelo.Vuelo;
 public class AeropuertoInfo  extends AppCompatActivity {
 
     private TextView nombre;
-    private Button regresar;
-    private Button ordenar;
 
     private TableLayout table;
 
@@ -55,6 +53,11 @@ public class AeropuertoInfo  extends AppCompatActivity {
 
     public void regresar(View view){
         Intent intent=new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void verEstadisticas(View view){
+        Intent intent=new Intent(this,Estadisticas.class);
         startActivity(intent);
     }
 
