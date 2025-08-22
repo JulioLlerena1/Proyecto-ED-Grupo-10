@@ -31,7 +31,7 @@ public class DynamicGraph<V, E> {
     }
 
     // 1. Find vertex by content
-    private Vertex<V, E> findVertex(V content) {
+    public Vertex<V, E> findVertex(V content) {
         if (content == null) return null;
         for (Vertex<V, E> v : vertices) {
             if (v.getValue().equals(content)) {

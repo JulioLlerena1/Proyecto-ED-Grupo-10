@@ -4,27 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
-    android:background="@color/white"
     android:onClick="ingresar">
 
     <ScrollView
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        tools:layout_editor_absoluteX="-7dp"
-        tools:layout_editor_absoluteY="-7dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="25dp"
-            android:paddingStart="25dp"
-            android:paddingLeft="25dp"
-            android:paddingTop="25dp"
-            android:paddingEnd="25dp"
-            android:paddingRight="25dp"
-            android:paddingBottom="25dp">
+            android:padding="25dp">
 
             <Space
                 android:layout_width="match_parent"
@@ -33,25 +23,23 @@
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="match_parent"
-                android:layout_height="353dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
                 app:srcCompat="@drawable/avion" />
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="356dp"
-                android:layout_height="64dp"
-                android:backgroundTint="@color/white"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="8dp">
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
 
-                <Button
-                    android:id="@+id/btn_ingresar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Ingresar"
-                    android:textColor="@color/white"
-                    android:textColorLink="#00BCD4"
-                    android:textStyle="bold" />
-            </androidx.cardview.widget.CardView>
+            <Button
+                android:id="@+id/btn_ingresar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/disenioboton"
+                android:text="Ingresar"
+                android:textColor="#886AC8"
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
