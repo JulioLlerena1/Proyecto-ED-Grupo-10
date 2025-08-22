@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         Configuration.getInstance().setOsmdroidTileCache(new File(getCacheDir(), "tiles"));
 
         setContentView(R.layout.activity_main);
+
+        // Creacion del menu deslizable
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         topAppBar = findViewById(R.id.topAppBar);
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Navegacion por el menu deslizable
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -74,9 +77,18 @@ public class MainActivity extends AppCompatActivity {
 
                 if (id == R.id.nav_item_one) {
 
+                    Intent intent = new Intent(MainActivity.this, ConfiguracionVuelos.class);
+                    startActivity(intent);
+
                 } else if (id == R.id.nav_item_two) {
 
+                    Intent intent = new Intent(MainActivity.this, ConfiguracionAeropuertos.class);
+                    startActivity(intent);
+
                 } else if (id == R.id.nav_send) {
+
+                    Intent intent = new Intent(MainActivity.this, BuscarRutas.class);
+                    startActivity(intent);
 
                 }
                 drawerLayout.closeDrawers(); // Cierra el drawer después de la selección
