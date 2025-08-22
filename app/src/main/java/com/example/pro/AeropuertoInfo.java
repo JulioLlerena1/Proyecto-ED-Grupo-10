@@ -57,7 +57,8 @@ public class AeropuertoInfo  extends AppCompatActivity {
     }
 
     public void verEstadisticas(View view){
-        Intent intent=new Intent(this,Estadisticas.class);
+        Intent intent = new Intent(this, Estadisticas.class);
+        intent.putExtra("aeropuerto", aeropuertoActual);
         startActivity(intent);
     }
 

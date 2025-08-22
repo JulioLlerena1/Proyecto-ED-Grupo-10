@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private MaterialToolbar topAppBar;
     private ActionBarDrawerToggle toggle;
-    public static DynamicGraph graph;
+    public static DynamicGraph<Aeropuerto, Double> graph;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         GeoPoint daxing = daxingAeropuerto.toGeoPoint();
 
 
-        graph = new DynamicGraph(false);
+        graph = new DynamicGraph<Aeropuerto, Double>(false);
         graph.addVertex(laxAeropuerto);
         graph.addVertex(quitoAeropuerto);
         graph.addVertex(frankfurtAeropuerto);
