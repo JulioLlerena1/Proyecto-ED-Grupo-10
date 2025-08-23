@@ -47,18 +47,14 @@ public class RutaCorta extends AppCompatActivity {
         ArrayList<String> codigosRuta = getIntent().getStringArrayListExtra("ruta");
 
         List<Aeropuerto> rutaAeropuertos = new ArrayList<>();
-        try {
-            List<Aeropuerto> todosAeropuertos = Aeropuerto.cargarAeropuertos(this);
-            for (String codigo : codigosRuta) {
-                for (Aeropuerto a : todosAeropuertos) {
-                    if (a.getCodigo().equalsIgnoreCase(codigo)) {
-                        rutaAeropuertos.add(a);
-                        break;
-                    }
+        List<Aeropuerto> todosAeropuertos = Aeropuerto.cargarAeropuertos(this);
+        for (String codigo : codigosRuta) {
+            for (Aeropuerto a : todosAeropuertos) {
+                if (a.getCodigo().equalsIgnoreCase(codigo)) {
+                    rutaAeropuertos.add(a);
+                    break;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         List<GeoPoint> puntos = new ArrayList<>();
