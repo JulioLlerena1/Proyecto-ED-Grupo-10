@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (id == R.id.nav_send) {
 
-                    Intent intent = new Intent(MainActivity.this, BuscarRutas.class);
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     startActivity(intent);
 
                 }
@@ -123,12 +123,24 @@ public class MainActivity extends AppCompatActivity {
         Aeropuerto madAeropuerto = aeropuertos.get(4);      // MAD
         Aeropuerto daxingAeropuerto = aeropuertos.get(5);   // PKX
 
+        Aeropuerto cdgAeropuerto = aeropuertos.get(6);   // CDG
+        Aeropuerto gruAeropuerto = aeropuertos.get(7);   // GRU
+        Aeropuerto sydAeropuerto = aeropuertos.get(8);   // SYD
+        Aeropuerto dxbAeropuerto = aeropuertos.get(9);   // DXB
+
+
         GeoPoint lax = laxAeropuerto.toGeoPoint();
         GeoPoint quito = quitoAeropuerto.toGeoPoint();
         GeoPoint frankfurt = frankfurtAeropuerto.toGeoPoint();
         GeoPoint jfkPoint = jfkAeropuerto.toGeoPoint();
         GeoPoint madPoint = madAeropuerto.toGeoPoint();
         GeoPoint daxing = daxingAeropuerto.toGeoPoint();
+
+
+        GeoPoint cdgPoint = cdgAeropuerto.toGeoPoint();
+        GeoPoint gruPoint = gruAeropuerto.toGeoPoint();
+        GeoPoint sydPoint = sydAeropuerto.toGeoPoint();
+        GeoPoint dxbPoint = dxbAeropuerto.toGeoPoint();
 
 
         graph = new DynamicGraph<Aeropuerto, Double>(false);
@@ -138,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
         graph.addVertex(jfkAeropuerto);
         graph.addVertex(madAeropuerto);
         graph.addVertex(daxingAeropuerto);
+
+        // Añadir al grafo
+        graph.addVertex(cdgAeropuerto);
+        graph.addVertex(gruAeropuerto);
+        graph.addVertex(sydAeropuerto);
+        graph.addVertex(dxbAeropuerto);
 
         //Asignacion de pesos
         double distLaxQuito = lax.distanceToAsDouble(quito) / 1000.0;       // km
@@ -150,6 +168,14 @@ public class MainActivity extends AppCompatActivity {
         double distFrankfurtMad = frankfurt.distanceToAsDouble(madPoint) / 1000.0;  // km
         double distMadJFK = madPoint.distanceToAsDouble(jfkPoint) / 1000.0;         // km
         double distMadDaxing = madPoint.distanceToAsDouble(daxing) / 1000.0;       // km
+        double distCdgMad = cdgPoint.distanceToAsDouble(madPoint) / 1000.0;
+        double distCdgFra = cdgPoint.distanceToAsDouble(frankfurt) / 1000.0;
+        double distGruQuito = gruPoint.distanceToAsDouble(quito) / 1000.0;
+        double distGruLax = gruPoint.distanceToAsDouble(lax) / 1000.0;
+        double distSydDaxing = sydPoint.distanceToAsDouble(daxing) / 1000.0;
+        double distSydLax = sydPoint.distanceToAsDouble(lax) / 1000.0;
+        double distDxbFra = dxbPoint.distanceToAsDouble(frankfurt) / 1000.0;
+        double distDxbPkx = dxbPoint.distanceToAsDouble(daxing) / 1000.0;
 
 
         graph.connect(laxAeropuerto, quitoAeropuerto, distLaxQuito);
@@ -162,7 +188,14 @@ public class MainActivity extends AppCompatActivity {
         graph.connect(frankfurtAeropuerto, madAeropuerto, distFrankfurtMad);
         graph.connect(madAeropuerto, jfkAeropuerto, distMadJFK);
         graph.connect(madAeropuerto, daxingAeropuerto, distMadDaxing);
-
+        graph.connect(cdgAeropuerto, madAeropuerto, distCdgMad);
+        graph.connect(cdgAeropuerto, frankfurtAeropuerto, distCdgFra);
+        graph.connect(gruAeropuerto, quitoAeropuerto, distGruQuito);
+        graph.connect(gruAeropuerto, laxAeropuerto, distGruLax);
+        graph.connect(sydAeropuerto, daxingAeropuerto, distSydDaxing);
+        graph.connect(sydAeropuerto, laxAeropuerto, distSydLax);
+        graph.connect(dxbAeropuerto, frankfurtAeropuerto, distDxbFra);
+        graph.connect(dxbAeropuerto, daxingAeropuerto, distDxbPkx);
 
         // Configuración inicial del mapa (centrado en el medio)
         mapView.getController().setZoom(4.0);
@@ -246,6 +279,62 @@ public class MainActivity extends AppCompatActivity {
         line10.setWidth(5f);
         line10.setColor(0xFF8800FF); // Violeta
         mapView.getOverlays().add(line10);
+
+        // CDG - MAD
+        Polyline line11 = new Polyline();
+        line11.setPoints(Arrays.asList(cdgPoint, madPoint));
+        line11.setWidth(5f);
+        line11.setColor(0xFFAA0000); // Rojo oscuro
+        mapView.getOverlays().add(line11);
+
+// CDG - FRA
+        Polyline line12 = new Polyline();
+        line12.setPoints(Arrays.asList(cdgPoint, frankfurt));
+        line12.setWidth(5f);
+        line12.setColor(0xFF00AAFF); // Celeste
+        mapView.getOverlays().add(line12);
+
+// GRU - UIO
+        Polyline line13 = new Polyline();
+        line13.setPoints(Arrays.asList(gruPoint, quito));
+        line13.setWidth(5f);
+        line13.setColor(0xFF008800); // Verde oscuro
+        mapView.getOverlays().add(line13);
+
+// GRU - LAX
+        Polyline line14 = new Polyline();
+        line14.setPoints(Arrays.asList(gruPoint, lax));
+        line14.setWidth(5f);
+        line14.setColor(0xFFAA5500); // Marrón
+        mapView.getOverlays().add(line14);
+
+// SYD - PKX
+        Polyline line15 = new Polyline();
+        line15.setPoints(Arrays.asList(sydPoint, daxing));
+        line15.setWidth(5f);
+        line15.setColor(0xFF8800FF); // Violeta
+        mapView.getOverlays().add(line15);
+
+// SYD - LAX
+        Polyline line16 = new Polyline();
+        line16.setPoints(Arrays.asList(sydPoint, lax));
+        line16.setWidth(5f);
+        line16.setColor(0xFFFFFF00); // Amarillo
+        mapView.getOverlays().add(line16);
+
+// DXB - FRA
+        Polyline line17 = new Polyline();
+        line17.setPoints(Arrays.asList(dxbPoint, frankfurt));
+        line17.setWidth(5f);
+        line17.setColor(0xFF00FFFF); // Cyan
+        mapView.getOverlays().add(line17);
+
+// DXB - PKX
+        Polyline line18 = new Polyline();
+        line18.setPoints(Arrays.asList(dxbPoint, daxing));
+        line18.setWidth(5f);
+        line18.setColor(0xFFFF8800); // Naranja
+        mapView.getOverlays().add(line18);
 
 
         mapView.invalidate();
