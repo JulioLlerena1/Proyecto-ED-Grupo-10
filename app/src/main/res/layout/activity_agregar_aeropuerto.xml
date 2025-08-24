@@ -1,10 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".AgregarAeropuerto">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agregar Nuevo Aeropuerto"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCodigoAeropuerto"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Código (ej: JFK, MAD)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextCodigoAeropuerto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="3"
+                android:textAllCaps="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Nombre del Aeropuerto -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNombreAeropuerto"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Nombre del Aeropuerto">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextNombreAeropuerto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Latitud -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilLatitud"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Latitud (ej: 40.6413)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextLatitudAeropuerto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal|numberSigned" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Longitud -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilLongitud"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Longitud (ej: -73.7781)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextLongitudAeropuerto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal|numberSigned" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="22dp" />
+
+        <Button
+            android:id="@+id/btnGuardarAeropuerto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/disenioboton"
+            android:onClick="guardarAeropuerto"
+            android:text="Guardar"
+            android:textColor="#886AC8"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="22dp" />
+
+        <Button
+            android:id="@+id/regresarConfAero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/disenioboton"
+            android:onClick="regresar"
+            android:text="Regresar"
+            android:textColor="#886AC8"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

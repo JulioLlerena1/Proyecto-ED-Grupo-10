@@ -24,6 +24,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
     private TableLayout table;
     private Button agregarAeropuerto;
     private List<Aeropuerto> aeropuertos;
+    private Aeropuerto aeropuertoAgg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +36,18 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
         agregarAeropuerto = findViewById(R.id.btn_agregarAeropuerto);
 
 
+        aeropuertos = new ArrayList<>();
+
+        aeropuertoAgg = (Aeropuerto) getIntent().getSerializableExtra("aeropuertoNuevo");
+
+        if (aeropuertoAgg != null) {
+
+            aeropuertos.add(aeropuertoAgg);
+
+        }
+
         try {
-            aeropuertos = Aeropuerto.cargarAeropuertos(this);
+            aeropuertos.addAll(Aeropuerto.cargarAeropuertos(this));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,18 +56,16 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
             mostrarAeropuertosEnTabla(aeropuertos);
         }
 
-        agregarAeropuerto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ConfiguracionAeropuertos.this, AgregarAeropuerto.class);
-                startActivity(intent);
-            }
-        });
     }
 
     public void regresar(View view){
 
         Intent intent=new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void introAgregarAero(View view){
+        Intent intent = new Intent(this, AgregarAeropuerto.class);
         startActivity(intent);
     }
 
@@ -137,5 +146,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
             mostrarAeropuertosEnTabla(this.aeropuertos);
         }
     }
+
+
 
 }
