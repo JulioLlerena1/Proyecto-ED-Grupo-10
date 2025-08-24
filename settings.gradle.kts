@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pro"
+rootProject.name = "ED_P1_Grupo10"
 include(":app")
  
