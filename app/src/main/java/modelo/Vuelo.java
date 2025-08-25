@@ -2,6 +2,8 @@ package modelo;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Vuelo {
+public class Vuelo implements Parcelable {
 
     private Date horaI;
     private Date horaF;
@@ -84,8 +86,8 @@ public class Vuelo {
     }
 
 
-    public static List<Vuelo> cargarVuelos(Context context, List<Aeropuerto> aeropuertos) throws IOException {
-        List<Vuelo> listaVuelos = new ArrayList<>();
+    public static ArrayList<Vuelo> cargarVuelos(Context context, List<Aeropuerto> aeropuertos) throws IOException {
+        ArrayList<Vuelo> listaVuelos = new ArrayList<>();
 
         AssetManager am = context.getAssets();
         InputStream is = am.open("vuelos.txt");
@@ -133,5 +135,44 @@ public class Vuelo {
         reader.close();
         return listaVuelos;
     }
+
+    protected Vuelo(Parcel in) {
+        long tmpHoraI = in.readLong();
+        horaI = tmpHoraI != -1 ? new Date(tmpHoraI) : null;
+        long tmpHoraF = in.readLong();
+        horaF = tmpHoraF != -1 ? new Date(tmpHoraF) : null;
+        numPasajeros = in.readInt();
+        numAsientos = in.readInt();
+        destino = in.readParcelable(Aeropuerto.class.getClassLoader());
+        partida = in.readParcelable(Aeropuerto.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(horaI != null ? horaI.getTime() : -1);
+        dest.writeLong(horaF != null ? horaF.getTime() : -1);
+        dest.writeInt(numPasajeros);
+        dest.writeInt(numAsientos);
+        dest.writeParcelable(destino, flags);
+        dest.writeParcelable(partida, flags);
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Vuelo> CREATOR = new Creator<Vuelo>() {
+        @Override
+        public Vuelo createFromParcel(Parcel in) {
+            return new Vuelo(in);
+        }
+
+        @Override
+        public Vuelo[] newArray(int size) {
+            return new Vuelo[size];
+        }
+    };
 
 }

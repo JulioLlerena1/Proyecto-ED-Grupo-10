@@ -29,6 +29,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle toggle;
     public static DynamicGraph<Aeropuerto, Double> graph;
     private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Vuelo> vuelos;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         aeropuertos = (ArrayList<Aeropuerto>) intent.getSerializableExtra("LISTA_AEROPUERTOS");
+        vuelos = (ArrayList<Vuelo>) intent.getSerializableExtra("LISTA_VUELOS");
 
 
         if(aeropuertos == null){
@@ -72,6 +75,20 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 aeropuertos = Aeropuerto.cargarAeropuertos(this);
+
+            } catch (IOException e) {
+
+                throw new RuntimeException(e);
+
+            }
+
+        }
+
+        if(vuelos == null){
+
+            try {
+
+                vuelos = Vuelo.cargarVuelos(this,aeropuertos);
 
             } catch (IOException e) {
 
@@ -107,17 +124,21 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, ConfiguracionVuelos.class);
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+                    intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
                     startActivity(intent);
 
                 } else if (id == R.id.nav_item_two) {
 
                     Intent intent = new Intent(MainActivity.this, ConfiguracionAeropuertos.class);
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+                    intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
                     startActivity(intent);
 
                 } else if (id == R.id.nav_send) {
 
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+                    intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
                     startActivity(intent);
 
                 }
@@ -137,74 +158,65 @@ public class MainActivity extends AppCompatActivity {
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
+        // Crear grafo dinámico
+        graph = new DynamicGraph<>(false);
+        for (Aeropuerto a : aeropuertos) graph.addVertex(a);
 
+        Random random = new Random();
 
+        // Conectar aeropuertos en el grafo y agregar líneas en el mapa
+        for (Vuelo v : vuelos) {
+            Aeropuerto origen = v.getPartida();
+            Aeropuerto destino = v.getDestino();
+            double distanciaKm = origen.toGeoPoint().distanceToAsDouble(destino.toGeoPoint()) / 1000.0;
 
+            // Conectar en el grafo
+            graph.connect(origen, destino, distanciaKm);
 
-        // Cargar vuelos
-        try {
+            // Generar color aleatorio
+            int colorAleatorio = 0xFF000000 // alfa 255
+                    | (random.nextInt(256) << 16)
+                    | (random.nextInt(256) << 8)
+                    | random.nextInt(256);
 
-            List<Vuelo> vuelos = Vuelo.cargarVuelos(this, aeropuertos);
-
-            // Crear grafo dinámico
-            graph = new DynamicGraph<>(false);
-            for (Aeropuerto a : aeropuertos) graph.addVertex(a);
-
-            Random random = new Random();
-
-            // Conectar aeropuertos en el grafo y agregar líneas en el mapa
-            for (Vuelo v : vuelos) {
-                Aeropuerto origen = v.getPartida();
-                Aeropuerto destino = v.getDestino();
-                double distanciaKm = origen.toGeoPoint().distanceToAsDouble(destino.toGeoPoint()) / 1000.0;
-
-                // Conectar en el grafo
-                graph.connect(origen, destino, distanciaKm);
-
-                // Generar color aleatorio
-                int colorAleatorio = 0xFF000000 // alfa 255
-                        | (random.nextInt(256) << 16)
-                        | (random.nextInt(256) << 8)
-                        | random.nextInt(256);
-
-                // Dibujar Polyline en el mapa
-                Polyline linea = new Polyline();
-                linea.setPoints(Arrays.asList(origen.toGeoPoint(), destino.toGeoPoint()));
-                linea.setWidth(5f);
-                linea.setColor(colorAleatorio);
-                mapView.getOverlays().add(linea);
-            }
-
-            // Agregar marcadores dinámicos
-            for (Aeropuerto a : aeropuertos) {
-                Marker marker = new Marker(mapView);
-                marker.setPosition(a.toGeoPoint());
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                marker.setTitle(a.getNombreCompleto());
-                marker.setOnMarkerClickListener((m, map) -> {
-                    mostrarInformacionAeropuerto(a);
-                    return true;
-                });
-                mapView.getOverlays().add(marker);
-            }
-
-            // Configuración inicial del mapa
-            mapView.getController().setZoom(4.0);
-            if (!aeropuertos.isEmpty()) {
-                GeoPoint centro = aeropuertos.get(0).toGeoPoint(); // centro aproximado
-                mapView.getController().setCenter(centro);
-            }
-
-            mapView.invalidate();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            // Dibujar Polyline en el mapa
+            Polyline linea = new Polyline();
+            linea.setPoints(Arrays.asList(origen.toGeoPoint(), destino.toGeoPoint()));
+            linea.setWidth(5f);
+            linea.setColor(colorAleatorio);
+            mapView.getOverlays().add(linea);
         }
+
+        // Agregar marcadores dinámicos
+        for (Aeropuerto a : aeropuertos) {
+            Marker marker = new Marker(mapView);
+            marker.setPosition(a.toGeoPoint());
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.setTitle(a.getNombreCompleto());
+            marker.setOnMarkerClickListener((m, map) -> {
+                mostrarInformacionAeropuerto(a);
+                return true;
+            });
+            mapView.getOverlays().add(marker);
+        }
+
+        // Configuración inicial del mapa
+        mapView.getController().setZoom(4.0);
+        if (!aeropuertos.isEmpty()) {
+            GeoPoint centro = aeropuertos.get(0).toGeoPoint(); // centro aproximado
+            mapView.getController().setCenter(centro);
+        }
+
+        mapView.invalidate();
+
+
     }
 
     private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto) {
         Intent intent = new Intent(this, AeropuertoInfo.class);
-        intent.putExtra("aeropuerto", (Parcelable) aeropuerto); //
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+        intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
+        intent.putExtra("AEROPUERTO_SELECCIONADO",(Serializable) aeropuerto);
         startActivity(intent);
     }
 

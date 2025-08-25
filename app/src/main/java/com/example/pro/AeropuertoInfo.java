@@ -46,7 +46,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
         table = findViewById(R.id.tableLayoutVuelos);
 
         Intent itObjeto = getIntent();
-        aeropuertoActual = (Aeropuerto) itObjeto.getSerializableExtra("aeropuerto");
+        aeropuertoActual = (Aeropuerto) itObjeto.getSerializableExtra("AEROPUERTO_SELECCIONADO");
         nombre.setText(aeropuertoActual.getNombre());
 
         cargarYMostrarVuelos();
