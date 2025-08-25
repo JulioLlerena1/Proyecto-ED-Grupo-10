@@ -32,9 +32,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import modelo.Aeropuerto;
 import modelo.DynamicGraph;
+import modelo.Vuelo;
 
 public class MainActivity extends AppCompatActivity {
     private MapView mapView;
@@ -138,230 +140,66 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        Aeropuerto laxAeropuerto = aeropuertos.get(0);      // LAX
-        Aeropuerto quitoAeropuerto = aeropuertos.get(1);    // UIO
-        Aeropuerto frankfurtAeropuerto = aeropuertos.get(2); // FRA
-        Aeropuerto jfkAeropuerto = aeropuertos.get(3);      // JFK
-        Aeropuerto madAeropuerto = aeropuertos.get(4);      // MAD
-        Aeropuerto daxingAeropuerto = aeropuertos.get(5);   // PKX
 
-        Aeropuerto cdgAeropuerto = aeropuertos.get(6);   // CDG
-        Aeropuerto gruAeropuerto = aeropuertos.get(7);   // GRU
-        Aeropuerto sydAeropuerto = aeropuertos.get(8);   // SYD
-        Aeropuerto dxbAeropuerto = aeropuertos.get(9);   // DXB
+        // Cargar vuelos
+        try {
 
+            List<Vuelo> vuelos = Vuelo.cargarVuelos(this, aeropuertos);
 
-        GeoPoint lax = laxAeropuerto.toGeoPoint();
-        GeoPoint quito = quitoAeropuerto.toGeoPoint();
-        GeoPoint frankfurt = frankfurtAeropuerto.toGeoPoint();
-        GeoPoint jfkPoint = jfkAeropuerto.toGeoPoint();
-        GeoPoint madPoint = madAeropuerto.toGeoPoint();
-        GeoPoint daxing = daxingAeropuerto.toGeoPoint();
+            // Crear grafo dinámico
+            graph = new DynamicGraph<>(false);
+            for (Aeropuerto a : aeropuertos) graph.addVertex(a);
 
+            Random random = new Random();
 
-        GeoPoint cdgPoint = cdgAeropuerto.toGeoPoint();
-        GeoPoint gruPoint = gruAeropuerto.toGeoPoint();
-        GeoPoint sydPoint = sydAeropuerto.toGeoPoint();
-        GeoPoint dxbPoint = dxbAeropuerto.toGeoPoint();
+            // Conectar aeropuertos en el grafo y agregar líneas en el mapa
+            for (Vuelo v : vuelos) {
+                Aeropuerto origen = v.getPartida();
+                Aeropuerto destino = v.getDestino();
+                double distanciaKm = origen.toGeoPoint().distanceToAsDouble(destino.toGeoPoint()) / 1000.0;
 
+                // Conectar en el grafo
+                graph.connect(origen, destino, distanciaKm);
 
-        graph = new DynamicGraph<Aeropuerto, Double>(false);
-        graph.addVertex(laxAeropuerto);
-        graph.addVertex(quitoAeropuerto);
-        graph.addVertex(frankfurtAeropuerto);
-        graph.addVertex(jfkAeropuerto);
-        graph.addVertex(madAeropuerto);
-        graph.addVertex(daxingAeropuerto);
+                // Generar color aleatorio
+                int colorAleatorio = 0xFF000000 // alfa 255
+                        | (random.nextInt(256) << 16)
+                        | (random.nextInt(256) << 8)
+                        | random.nextInt(256);
 
-        // Añadir al grafo
-        graph.addVertex(cdgAeropuerto);
-        graph.addVertex(gruAeropuerto);
-        graph.addVertex(sydAeropuerto);
-        graph.addVertex(dxbAeropuerto);
+                // Dibujar Polyline en el mapa
+                Polyline linea = new Polyline();
+                linea.setPoints(Arrays.asList(origen.toGeoPoint(), destino.toGeoPoint()));
+                linea.setWidth(5f);
+                linea.setColor(colorAleatorio);
+                mapView.getOverlays().add(linea);
+            }
 
-        //Asignacion de pesos
-        double distLaxQuito = lax.distanceToAsDouble(quito) / 1000.0;       // km
-        double distLaxFrankfurt = lax.distanceToAsDouble(frankfurt) / 1000.0; // km
-        double distFrankfurtDaxing = frankfurt.distanceToAsDouble(daxing) / 1000.0; // km
-        double distQuitoDaxing = quito.distanceToAsDouble(daxing) / 1000.0; // km
-        double distQuitoJFK = quito.distanceToAsDouble(jfkPoint) / 1000.0;   // km
-        double distLaxJFK = lax.distanceToAsDouble(jfkPoint) / 1000.0;       // km
-        double distJFKFrankfurt = jfkPoint.distanceToAsDouble(frankfurt) / 1000.0; // km
-        double distFrankfurtMad = frankfurt.distanceToAsDouble(madPoint) / 1000.0;  // km
-        double distMadJFK = madPoint.distanceToAsDouble(jfkPoint) / 1000.0;         // km
-        double distMadDaxing = madPoint.distanceToAsDouble(daxing) / 1000.0;       // km
-        double distCdgMad = cdgPoint.distanceToAsDouble(madPoint) / 1000.0;
-        double distCdgFra = cdgPoint.distanceToAsDouble(frankfurt) / 1000.0;
-        double distGruQuito = gruPoint.distanceToAsDouble(quito) / 1000.0;
-        double distGruLax = gruPoint.distanceToAsDouble(lax) / 1000.0;
-        double distSydDaxing = sydPoint.distanceToAsDouble(daxing) / 1000.0;
-        double distSydLax = sydPoint.distanceToAsDouble(lax) / 1000.0;
-        double distDxbFra = dxbPoint.distanceToAsDouble(frankfurt) / 1000.0;
-        double distDxbPkx = dxbPoint.distanceToAsDouble(daxing) / 1000.0;
-
-
-        graph.connect(laxAeropuerto, quitoAeropuerto, distLaxQuito);
-        graph.connect(laxAeropuerto, frankfurtAeropuerto, distLaxFrankfurt);
-        graph.connect(frankfurtAeropuerto, daxingAeropuerto, distFrankfurtDaxing);
-        graph.connect(quitoAeropuerto, daxingAeropuerto, distQuitoDaxing);
-        graph.connect(quitoAeropuerto, jfkAeropuerto, distQuitoJFK);
-        graph.connect(laxAeropuerto, jfkAeropuerto, distLaxJFK);
-        graph.connect(jfkAeropuerto, frankfurtAeropuerto, distJFKFrankfurt);
-        graph.connect(frankfurtAeropuerto, madAeropuerto, distFrankfurtMad);
-        graph.connect(madAeropuerto, jfkAeropuerto, distMadJFK);
-        graph.connect(madAeropuerto, daxingAeropuerto, distMadDaxing);
-        graph.connect(cdgAeropuerto, madAeropuerto, distCdgMad);
-        graph.connect(cdgAeropuerto, frankfurtAeropuerto, distCdgFra);
-        graph.connect(gruAeropuerto, quitoAeropuerto, distGruQuito);
-        graph.connect(gruAeropuerto, laxAeropuerto, distGruLax);
-        graph.connect(sydAeropuerto, daxingAeropuerto, distSydDaxing);
-        graph.connect(sydAeropuerto, laxAeropuerto, distSydLax);
-        graph.connect(dxbAeropuerto, frankfurtAeropuerto, distDxbFra);
-        graph.connect(dxbAeropuerto, daxingAeropuerto, distDxbPkx);
-
-        // Configuración inicial del mapa (centrado en el medio)
-        mapView.getController().setZoom(4.0);
-        mapView.getController().setCenter(new GeoPoint(15.0, -77.0)); // Centro aproximado entre ambos
-
-        for (Aeropuerto a : aeropuertos) {
-            GeoPoint punto = a.toGeoPoint();
-            Marker marker = new Marker(mapView);
-            marker.setPosition(punto);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setTitle(a.getNombreCompleto());
-            // Listener para click
-            marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker, MapView mapView) {
+            // Agregar marcadores dinámicos
+            for (Aeropuerto a : aeropuertos) {
+                Marker marker = new Marker(mapView);
+                marker.setPosition(a.toGeoPoint());
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                marker.setTitle(a.getNombreCompleto());
+                marker.setOnMarkerClickListener((m, map) -> {
                     mostrarInformacionAeropuerto(a);
                     return true;
-                }
-            });
-            mapView.getOverlays().add(marker);
+                });
+                mapView.getOverlays().add(marker);
+            }
+
+            // Configuración inicial del mapa
+            mapView.getController().setZoom(4.0);
+            if (!aeropuertos.isEmpty()) {
+                GeoPoint centro = aeropuertos.get(0).toGeoPoint(); // centro aproximado
+                mapView.getController().setCenter(centro);
+            }
+
+            mapView.invalidate();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-
-        // Crear líneas (aristas del grafo) entre aeropuertos
-        Polyline line1 = new Polyline();
-        line1.setPoints(Arrays.asList(lax, quito));
-        line1.setWidth(5f);
-        line1.setColor(0xFF0000FF); // Azul
-        mapView.getOverlays().add(line1);
-
-        Polyline line2 = new Polyline();
-        line2.setPoints(Arrays.asList(lax, frankfurt));
-        line2.setWidth(5f);
-        line2.setColor(0xFF00FF00); // Verde
-        mapView.getOverlays().add(line2);
-
-        Polyline line3 = new Polyline();
-        line3.setPoints(Arrays.asList(frankfurt, daxing));
-        line3.setWidth(5f);
-        line3.setColor(0xFFFF0000); // Rojo
-        mapView.getOverlays().add(line3);
-
-        Polyline line4 = new Polyline();
-        line4.setPoints(Arrays.asList(quito, daxing));
-        line4.setWidth(5f);
-        line4.setColor(0xFFFFFF00); // Amarillo
-        mapView.getOverlays().add(line4);
-
-        Polyline line5 = new Polyline();
-        line5.setPoints(Arrays.asList(quito, jfkPoint));
-        line5.setWidth(5f);
-        line5.setColor(0xFF00FFFF); // Cyan
-        mapView.getOverlays().add(line5);
-
-        Polyline line6 = new Polyline();
-        line6.setPoints(Arrays.asList(lax, jfkPoint));
-        line6.setWidth(5f);
-        line6.setColor(0xFFFF00FF); // Magenta
-        mapView.getOverlays().add(line6);
-
-        Polyline line7 = new Polyline();
-        line7.setPoints(Arrays.asList(jfkPoint, frankfurt));
-        line7.setWidth(5f);
-        line7.setColor(0xFF888888); // Gris
-        mapView.getOverlays().add(line7);
-
-        Polyline line8 = new Polyline();
-        line8.setPoints(Arrays.asList(frankfurt, madPoint));
-        line8.setWidth(5f);
-        line8.setColor(0xFFFF8800); // Naranja
-        mapView.getOverlays().add(line8);
-
-        Polyline line9 = new Polyline();
-        line9.setPoints(Arrays.asList(madPoint, jfkPoint));
-        line9.setWidth(5f);
-        line9.setColor(0xFF008800); // Verde oscuro
-        mapView.getOverlays().add(line9);
-
-        Polyline line10 = new Polyline();
-        line10.setPoints(Arrays.asList(madPoint, daxing));
-        line10.setWidth(5f);
-        line10.setColor(0xFF8800FF); // Violeta
-        mapView.getOverlays().add(line10);
-
-        // CDG - MAD
-        Polyline line11 = new Polyline();
-        line11.setPoints(Arrays.asList(cdgPoint, madPoint));
-        line11.setWidth(5f);
-        line11.setColor(0xFFAA0000); // Rojo oscuro
-        mapView.getOverlays().add(line11);
-
-// CDG - FRA
-        Polyline line12 = new Polyline();
-        line12.setPoints(Arrays.asList(cdgPoint, frankfurt));
-        line12.setWidth(5f);
-        line12.setColor(0xFF00AAFF); // Celeste
-        mapView.getOverlays().add(line12);
-
-// GRU - UIO
-        Polyline line13 = new Polyline();
-        line13.setPoints(Arrays.asList(gruPoint, quito));
-        line13.setWidth(5f);
-        line13.setColor(0xFF008800); // Verde oscuro
-        mapView.getOverlays().add(line13);
-
-// GRU - LAX
-        Polyline line14 = new Polyline();
-        line14.setPoints(Arrays.asList(gruPoint, lax));
-        line14.setWidth(5f);
-        line14.setColor(0xFFAA5500); // Marrón
-        mapView.getOverlays().add(line14);
-
-// SYD - PKX
-        Polyline line15 = new Polyline();
-        line15.setPoints(Arrays.asList(sydPoint, daxing));
-        line15.setWidth(5f);
-        line15.setColor(0xFF8800FF); // Violeta
-        mapView.getOverlays().add(line15);
-
-// SYD - LAX
-        Polyline line16 = new Polyline();
-        line16.setPoints(Arrays.asList(sydPoint, lax));
-        line16.setWidth(5f);
-        line16.setColor(0xFFFFFF00); // Amarillo
-        mapView.getOverlays().add(line16);
-
-// DXB - FRA
-        Polyline line17 = new Polyline();
-        line17.setPoints(Arrays.asList(dxbPoint, frankfurt));
-        line17.setWidth(5f);
-        line17.setColor(0xFF00FFFF); // Cyan
-        mapView.getOverlays().add(line17);
-
-// DXB - PKX
-        Polyline line18 = new Polyline();
-        line18.setPoints(Arrays.asList(dxbPoint, daxing));
-        line18.setWidth(5f);
-        line18.setColor(0xFFFF8800); // Naranja
-        mapView.getOverlays().add(line18);
-
-
-        mapView.invalidate();
-
-
     }
 
     private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto) {
