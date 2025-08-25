@@ -43,6 +43,11 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".AeropuertoInfo" />
         <activity android:name=".RutaCorta" />
+        <activity android:name=".Estadisticas"/>
+     
+
+
+
     </application>
 
 </manifest>
