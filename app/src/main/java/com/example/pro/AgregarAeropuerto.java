@@ -2,6 +2,7 @@ package com.example.pro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,12 +14,16 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+
 import modelo.Aeropuerto;
 
 public class AgregarAeropuerto extends AppCompatActivity {
 
     private TextInputEditText editTextCodigo, editTextNombre, editTextLatitud, editTextLongitud;
     private Button btnGuardarAeropuerto;
+
+    private ArrayList<Aeropuerto> aeropuertos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,9 @@ public class AgregarAeropuerto extends AppCompatActivity {
         editTextLongitud = findViewById(R.id.editTextLongitudAeropuerto);
         btnGuardarAeropuerto = findViewById(R.id.btnGuardarAeropuerto);
 
+        aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
+
+
     }
 
     public void guardarAeropuerto(View view) {
@@ -43,8 +51,9 @@ public class AgregarAeropuerto extends AppCompatActivity {
 
         Aeropuerto nuevoAeropuerto = new Aeropuerto(codigo, nombre, Double.parseDouble(latitud), Double.parseDouble(longitud));
 
+        aeropuertos.add(nuevoAeropuerto);
         Intent intent = new Intent(this, ConfiguracionAeropuertos.class);
-        intent.putExtra("aeropuertoNuevo", nuevoAeropuerto);
+        intent.putParcelableArrayListExtra("AEROPUERTO_AGREGADO",aeropuertos);
         startActivity(intent);
 
 
@@ -52,6 +61,7 @@ public class AgregarAeropuerto extends AppCompatActivity {
 
     public void regresar(View view){
         Intent intent=new Intent(this,ConfiguracionAeropuertos.class);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         startActivity(intent);
     }
 }

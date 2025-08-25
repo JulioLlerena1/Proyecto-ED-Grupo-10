@@ -3,6 +3,7 @@ package com.example.pro;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -58,7 +59,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
 
     public void verEstadisticas(View view){
         Intent intent = new Intent(this, Estadisticas.class);
-        intent.putExtra("aeropuerto", aeropuertoActual);
+        intent.putExtra("aeropuerto", (Parcelable) aeropuertoActual);
         startActivity(intent);
     }
 

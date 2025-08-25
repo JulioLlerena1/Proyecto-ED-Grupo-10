@@ -2,6 +2,8 @@ package modelo;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -13,7 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Aeropuerto implements Serializable {
+public class Aeropuerto implements Parcelable, Serializable {
     private String codigo;
     private String nombre;
     private double latitud;
@@ -36,8 +38,8 @@ public class Aeropuerto implements Serializable {
     /**
      * Lee el archivo aeropuertos.txt desde assets y devuelve una lista de Aeropuerto
      */
-    public static List<Aeropuerto> cargarAeropuertos(Context context) throws IOException {
-        List<Aeropuerto> lista = new ArrayList<>();
+    public static ArrayList<Aeropuerto> cargarAeropuertos(Context context) throws IOException {
+        ArrayList<Aeropuerto> lista = new ArrayList<>();
 
         AssetManager am = context.getAssets();
         InputStream is = am.open("aeropuertos");
@@ -85,4 +87,37 @@ public class Aeropuerto implements Serializable {
     public int hashCode() {
         return codigo.toLowerCase().hashCode();
     }
+
+    protected Aeropuerto(Parcel in) {
+        codigo = in.readString();
+        nombre = in.readString();
+        latitud = in.readDouble();
+        longitud = in.readDouble();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(codigo);
+        dest.writeString(nombre);
+        dest.writeDouble(latitud);
+        dest.writeDouble(longitud);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Aeropuerto> CREATOR = new Creator<Aeropuerto>() {
+        @Override
+        public Aeropuerto createFromParcel(Parcel in) {
+            return new Aeropuerto(in);
+        }
+
+        @Override
+        public Aeropuerto[] newArray(int size) {
+            return new Aeropuerto[size];
+        }
+    };
+
 }

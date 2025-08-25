@@ -18,6 +18,8 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+
+import android.os.Parcelable;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialToolbar topAppBar;
     private ActionBarDrawerToggle toggle;
     public static DynamicGraph<Aeropuerto, Double> graph;
+    private ArrayList<Aeropuerto> aeropuertos;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
@@ -54,6 +57,29 @@ public class MainActivity extends AppCompatActivity {
         Configuration.getInstance().setOsmdroidTileCache(new File(getCacheDir(), "tiles"));
 
         setContentView(R.layout.activity_main);
+
+        aeropuertos = new ArrayList<>();
+
+
+        Intent intent = getIntent();
+        aeropuertos = (ArrayList<Aeropuerto>) intent.getSerializableExtra("LISTA_AEROPUERTOS");
+
+
+        if(aeropuertos == null){
+
+            try {
+
+                aeropuertos = Aeropuerto.cargarAeropuertos(this);
+
+            } catch (IOException e) {
+
+                throw new RuntimeException(e);
+
+            }
+
+        }
+
+
 
         // Creacion del menu deslizable
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -78,11 +104,13 @@ public class MainActivity extends AppCompatActivity {
                 if (id == R.id.nav_item_one) {
 
                     Intent intent = new Intent(MainActivity.this, ConfiguracionVuelos.class);
+                    intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
                     startActivity(intent);
 
                 } else if (id == R.id.nav_item_two) {
 
                     Intent intent = new Intent(MainActivity.this, ConfiguracionAeropuertos.class);
+                    intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
                     startActivity(intent);
 
                 } else if (id == R.id.nav_send) {
@@ -108,13 +136,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.setMultiTouchControls(true);
 
 
-        List<Aeropuerto> aeropuertos = new ArrayList<>();
 
-        try {
-            aeropuertos = Aeropuerto.cargarAeropuertos(this);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         Aeropuerto laxAeropuerto = aeropuertos.get(0);      // LAX
         Aeropuerto quitoAeropuerto = aeropuertos.get(1);    // UIO
@@ -344,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto) {
         Intent intent = new Intent(this, AeropuertoInfo.class);
-        intent.putExtra("aeropuerto", aeropuerto); //
+        intent.putExtra("aeropuerto", (Parcelable) aeropuerto); //
         startActivity(intent);
     }
 

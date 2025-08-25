@@ -23,8 +23,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
     private TableLayout table;
     private Button agregarAeropuerto;
-    private List<Aeropuerto> aeropuertos;
-    private Aeropuerto aeropuertoAgg;
+    private ArrayList<Aeropuerto> aeropuertos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +37,12 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
         aeropuertos = new ArrayList<>();
 
-        aeropuertoAgg = (Aeropuerto) getIntent().getSerializableExtra("aeropuertoNuevo");
+        aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("AEROPUERTO_AGREGADO");
 
-        if (aeropuertoAgg != null) {
+        if (aeropuertos == null) {
 
-            aeropuertos.add(aeropuertoAgg);
+            aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
 
-        }
-
-        try {
-            aeropuertos.addAll(Aeropuerto.cargarAeropuertos(this));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         if (aeropuertos != null) {
@@ -61,11 +54,14 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
     public void regresar(View view){
 
         Intent intent=new Intent(this,MainActivity.class);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+
         startActivity(intent);
     }
 
     public void introAgregarAero(View view){
         Intent intent = new Intent(this, AgregarAeropuerto.class);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         startActivity(intent);
     }
 
@@ -78,21 +74,6 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
         headerNombre.setText("Nombre");
         headerNombre.setPadding(8, 8, 8, 8);
         headerRow.addView(headerNombre);
-
-        TextView headerCodigo = new TextView(this);
-        headerCodigo.setText("Código");
-        headerCodigo.setPadding(8, 8, 8, 8);
-        headerRow.addView(headerCodigo);
-
-        TextView headerLatitud = new TextView(this);
-        headerLatitud.setText("Lat");
-        headerLatitud.setPadding(8, 8, 8, 8);
-        headerRow.addView(headerLatitud);
-
-        TextView headerLongitud = new TextView(this);
-        headerLongitud.setText("Long");
-        headerLongitud.setPadding(8, 8, 8, 8);
-        headerRow.addView(headerLongitud);
 
         TextView headerAccion = new TextView(this);
         headerAccion.setText("Acción");
@@ -107,21 +88,6 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
             nombreTextView.setText(aeropuerto.getNombre());
             nombreTextView.setPadding(8, 8, 8, 8);
             dataRow.addView(nombreTextView);
-
-            TextView codigoTextView = new TextView(this);
-            codigoTextView.setText(aeropuerto.getCodigo());
-            codigoTextView.setPadding(8, 8, 8, 8);
-            dataRow.addView(codigoTextView);
-
-            TextView latitudTextView = new TextView(this);
-            latitudTextView.setText(""+aeropuerto.getLatitud());
-            latitudTextView.setPadding(8, 8, 8, 8);
-            dataRow.addView(latitudTextView);
-
-            TextView longitudTextView = new TextView(this);
-            longitudTextView.setText(""+aeropuerto.getLongitud());
-            longitudTextView.setPadding(8, 8, 8, 8);
-            dataRow.addView(longitudTextView);
 
             Button botonEliminar = new Button(this);
             botonEliminar.setText("Eliminar");
