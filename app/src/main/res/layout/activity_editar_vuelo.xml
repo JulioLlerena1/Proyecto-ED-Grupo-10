@@ -1,10 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EditarVuelo">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<com.google.android.material.appbar.AppBarLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+<com.google.android.material.appbar.MaterialToolbar
+    android:id="@+id/toolbar_editar_vuelo"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    app:title="Editar Vuelo"
+/>
+
+</com.google.android.material.appbar.AppBarLayout>
+
+<ScrollView
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Aeropuerto de Origen Spinner -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Aeropuerto de Origen"
+        android:textAppearance="?attr/textAppearanceLabelLarge"/>
+    <Spinner
+        android:id="@+id/spinner_aeropuerto_origen_editar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"/>
+
+    <!-- Aeropuerto de Destino Spinner -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Aeropuerto de Destino"
+        android:textAppearance="?attr/textAppearanceLabelLarge"/>
+    <Spinner
+        android:id="@+id/spinner_aeropuerto_destino_editar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"/>
+
+    <!-- Hora de Inicio -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_hora_inicio_editar"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Hora de Salida (HH:mm)">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_hora_inicio_editar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:maxLength="5"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Hora de Fin -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_hora_fin_editar"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Hora de Llegada (HH:mm)">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_hora_fin_editar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:maxLength="5"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Número de Pasajeros -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_num_pasajeros_editar"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Número de Pasajeros">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_num_pasajeros_editar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Número de Asientos -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_num_asientos_editar"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Número de Asientos Totales">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_num_asientos_editar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/button_actualizar_vuelo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Actualizar Vuelo"/>
+
+</LinearLayout>
+</ScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
