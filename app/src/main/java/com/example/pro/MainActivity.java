@@ -178,11 +178,6 @@ public class MainActivity extends AppCompatActivity {
         Random random = new Random();
 
         // Conectar aeropuertos en el grafo y agregar líneas en el mapa
-        for (Vuelo v : vuelos) {
-            Aeropuerto origen = v.getPartida();
-            Aeropuerto destino = v.getDestino();
-            double distanciaKm = origen.toGeoPoint().distanceToAsDouble(destino.toGeoPoint()) / 1000.0;
-
             GeoPoint lax = laxAeropuerto.toGeoPoint();
             GeoPoint quito = quitoAeropuerto.toGeoPoint();
             GeoPoint frankfurt = frankfurtAeropuerto.toGeoPoint();
@@ -293,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 mapView.getOverlays().add(line);
             }
             mapView.invalidate();
-        }
+
     }
 
 
