@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/disenioboton"
-                android:onClick="verEstadisticas"
+                android:onClick="introAgregarVuelo"
                 android:text="Agregar Vuelo"
                 android:textColor="#886AC8"
                 android:textStyle="bold" />

@@ -20,6 +20,12 @@
         android:theme="@style/Theme.Pro"
         tools:targetApi="31">
         <activity
+            android:name=".EditarVuelo"
+            android:exported="false" />
+        <activity
+            android:name=".AgregarVuelo"
+            android:exported="false" />
+        <activity
             android:name=".AgregarAeropuerto"
             android:exported="false" />
         <activity
@@ -43,11 +49,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".AeropuertoInfo" />
         <activity android:name=".RutaCorta" />
-        <activity android:name=".Estadisticas"/>
-     
-
-
-
+        <activity android:name=".Estadisticas" />
     </application>
 
 </manifest>
