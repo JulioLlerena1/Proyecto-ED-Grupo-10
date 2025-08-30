@@ -58,10 +58,11 @@ public class AeropuertoInfo  extends AppCompatActivity {
     }
 
     public void regresar(View view){
-        Intent intent=new Intent(this,MainActivity.class);
-        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-        intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-        startActivity(intent);
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     public void verEstadisticas(View view){

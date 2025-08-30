@@ -3,6 +3,8 @@ package com.example.pro;
 
 import static modelo.Aeropuerto.cargarAeropuertos;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -16,6 +18,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polyline;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
@@ -49,8 +52,27 @@ public class MainActivity extends AppCompatActivity {
     public static DynamicGraph<Aeropuerto, Double> graph;
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Vuelo> vuelos;
+    private ArrayList<Conexion> conexiones;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+
+
+    // Registro del launcher para recibir resultados
+    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        aeropuertos = data.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+                        conexiones = data.getParcelableArrayListExtra("LISTA_CONEXIONES");
+                        mostrarAeropuertosEnMapa(aeropuertos); // actualiza el mapa con la lista modificada
+                        mostrarConexionesEnMapayCreacionGrafo(conexiones,aeropuertos);
+                    }
+                }
+            }
+    );
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        try {
+            conexiones = Conexion.cargarConexiones(this, aeropuertos);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // Creacion del menu deslizable
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -133,7 +161,9 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, ConfiguracionAeropuertos.class);
 
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-                    startActivity(intent);
+                    intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
+
+                    launcher.launch(intent);
 
                 } else if (id == R.id.nav_send) {
 
@@ -159,92 +189,52 @@ public class MainActivity extends AppCompatActivity {
         mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
 
-        // Crear grafo dinámico
+
+        // Configuración inicial del mapa (centrado en el medio)
+        mapView.getController().setZoom(4.0);
+        mapView.getController().setCenter(new GeoPoint(15.0, -77.0)); // Centro aproximado entre ambos
+        mapView.invalidate();
+
+
+        mostrarConexionesEnMapayCreacionGrafo(conexiones,aeropuertos);
+        mostrarAeropuertosEnMapa(aeropuertos);
+
+    }
+
+    private void mostrarConexionesEnMapayCreacionGrafo(ArrayList<Conexion> conexiones, ArrayList<Aeropuerto> aeropuertos) {
         graph = new DynamicGraph<>(false);
         for (Aeropuerto a : aeropuertos) graph.addVertex(a);
 
-        Aeropuerto laxAeropuerto = aeropuertos.get(0);      // LAX
-        Aeropuerto quitoAeropuerto = aeropuertos.get(1);    // UIO
-        Aeropuerto frankfurtAeropuerto = aeropuertos.get(2); // FRA
-        Aeropuerto jfkAeropuerto = aeropuertos.get(3);      // JFK
-        Aeropuerto madAeropuerto = aeropuertos.get(4);      // MAD
-        Aeropuerto daxingAeropuerto = aeropuertos.get(5);   // PKX
-
-        Aeropuerto cdgAeropuerto = aeropuertos.get(6);   // CDG
-        Aeropuerto gruAeropuerto = aeropuertos.get(7);   // GRU
-        Aeropuerto sydAeropuerto = aeropuertos.get(8);   // SYD
-        Aeropuerto dxbAeropuerto = aeropuertos.get(9);   // DXB
-        Random random = new Random();
-
-        // Conectar aeropuertos en el grafo y agregar líneas en el mapa
-            GeoPoint lax = laxAeropuerto.toGeoPoint();
-            GeoPoint quito = quitoAeropuerto.toGeoPoint();
-            GeoPoint frankfurt = frankfurtAeropuerto.toGeoPoint();
-            GeoPoint jfkPoint = jfkAeropuerto.toGeoPoint();
-            GeoPoint madPoint = madAeropuerto.toGeoPoint();
-            GeoPoint daxing = daxingAeropuerto.toGeoPoint();
-            GeoPoint cdgPoint = cdgAeropuerto.toGeoPoint();
-            GeoPoint gruPoint = gruAeropuerto.toGeoPoint();
-            GeoPoint sydPoint = sydAeropuerto.toGeoPoint();
-            GeoPoint dxbPoint = dxbAeropuerto.toGeoPoint();
-
-        for (Vuelo v : vuelos) {
-            Aeropuerto origen = v.getPartida();
-            Aeropuerto destino = v.getDestino();
-            double distanciaKm = origen.toGeoPoint().distanceToAsDouble(destino.toGeoPoint()) / 1000.0;
+        for (Conexion c : conexiones) {
+            Aeropuerto origen = c.getOrigen();
+            Aeropuerto destino = c.getDestino();
+            double distanciaKm = c.getDistanciaKm();
 
             graph.connect(origen, destino, distanciaKm);
 
-
+            Polyline linea = new Polyline();
+            linea.setPoints(Arrays.asList(origen.toGeoPoint(), destino.toGeoPoint()));
+            linea.setWidth(5f);
+            linea.setColor(c.getColor());
+            mapView.getOverlays().add(linea);
         }
+    }
 
-            // Configuración inicial del mapa (centrado en el medio)
-            mapView.getController().setZoom(4.0);
-            mapView.getController().setCenter(new GeoPoint(15.0, -77.0)); // Centro aproximado entre ambos
-
-            for (Aeropuerto a : aeropuertos) {
-                Marker marker = new Marker(mapView);
-                marker.setPosition(a.toGeoPoint());
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                marker.setTitle(a.getNombreCompleto());
-                marker.setOnMarkerClickListener((m, map) -> {
-                    mostrarInformacionAeropuerto(a);
-                    return true;
-                });
-                mapView.getOverlays().add(marker);
-            }
-
-
-            List<Conexion> conexiones = Arrays.asList(
-                    new Conexion(lax, quito, 0xFF0000FF),   // Azul
-                    new Conexion(lax, frankfurt, 0xFF00FF00), // Verde
-                    new Conexion(frankfurt, daxing, 0xFFFF0000), // Rojo
-                    new Conexion(quito, daxing, 0xFFFFFF00), // Amarillo
-                    new Conexion(quito, jfkPoint, 0xFF00FFFF), // Cyan
-                    new Conexion(lax, jfkPoint, 0xFFFF00FF), // Magenta
-                    new Conexion(jfkPoint, frankfurt, 0xFF888888), // Gris
-                    new Conexion(frankfurt, madPoint, 0xFFFF8800), // Naranja
-                    new Conexion(madPoint, jfkPoint, 0xFF008800), // Verde oscuro
-                    new Conexion(madPoint, daxing, 0xFF8800FF), // Violeta
-                    new Conexion(cdgPoint, madPoint, 0xFFAA0000), // Rojo oscuro
-                    new Conexion(cdgPoint, frankfurt, 0xFF00AAFF), // Celeste
-                    new Conexion(gruPoint, quito, 0xFF008800), // Verde oscuro
-                    new Conexion(gruPoint, lax, 0xFFAA5500), // Marrón
-                    new Conexion(sydPoint, daxing, 0xFF8800FF), // Violeta
-                    new Conexion(sydPoint, lax, 0xFFFFFF00), // Amarillo
-                    new Conexion(dxbPoint, frankfurt, 0xFF00FFFF), // Cyan
-                    new Conexion(dxbPoint, daxing, 0xFFFF8800) // Naranja
-            );
-
-            for (Conexion c : conexiones) {
-                Polyline line = new Polyline();
-                line.setPoints(Arrays.asList(c.origen, c.destino));
-                line.setWidth(5f);
-                line.setColor(c.color);
-                mapView.getOverlays().add(line);
-            }
-            mapView.invalidate();
-
+    private void mostrarAeropuertosEnMapa(ArrayList<Aeropuerto> aeropuertos) {
+        List<Overlay> overlays = mapView.getOverlays();
+        overlays.removeIf(o -> o instanceof Marker);
+        for (Aeropuerto a : aeropuertos) {
+            Marker marker = new Marker(mapView);
+            marker.setPosition(a.toGeoPoint());
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.setTitle(a.getNombreCompleto());
+            marker.setOnMarkerClickListener((m, map) -> {
+                mostrarInformacionAeropuerto(a);
+                return true;
+            });
+            mapView.getOverlays().add(marker);
+        }
+        mapView.invalidate(); // refrescar el mapa
     }
 
 

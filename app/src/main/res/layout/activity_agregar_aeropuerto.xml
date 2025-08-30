@@ -20,6 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"/>
 
+        <!-- Código -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilCodigoAeropuerto"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -36,7 +37,7 @@
                 android:textAllCaps="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Nombre del Aeropuerto -->
+        <!-- Nombre -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNombreAeropuerto"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -84,10 +85,19 @@
                 android:inputType="numberDecimal|numberSigned" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Selección múltiple de conexiones -->
+        <com.example.pro.MultiSelectSpinner
+            android:id="@+id/spinnerConexiones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:spinnerMode="dropdown" />
+
         <Space
             android:layout_width="match_parent"
-            android:layout_height="22dp" />
+            android:layout_height="16dp"/>
 
+        <!-- Botón Guardar -->
         <Button
             android:id="@+id/btnGuardarAeropuerto"
             android:layout_width="match_parent"
@@ -100,8 +110,9 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="22dp" />
+            android:layout_height="16dp" />
 
+        <!-- Botón Regresar -->
         <Button
             android:id="@+id/regresarConfAero"
             android:layout_width="match_parent"
@@ -112,5 +123,10 @@
             android:textColor="#886AC8"
             android:textStyle="bold" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
     </LinearLayout>
 </ScrollView>
+

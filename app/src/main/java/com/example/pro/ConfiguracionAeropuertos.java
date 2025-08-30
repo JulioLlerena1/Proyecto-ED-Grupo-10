@@ -11,6 +11,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
@@ -18,12 +20,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 
 public class ConfiguracionAeropuertos extends AppCompatActivity {
 
     private TableLayout table;
     private Button agregarAeropuerto;
     private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Conexion> conexiones;
+
+
+    private ActivityResultLauncher<Intent> launcherAgregar = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    aeropuertos = result.getData().getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+                    conexiones = result.getData().getParcelableArrayListExtra("LISTA_CONEXIONES");
+                    mostrarAeropuertosEnTabla(aeropuertos);
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +50,11 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
         table = findViewById(R.id.tableLayoutAeropuertos);
         agregarAeropuerto = findViewById(R.id.btn_agregarAeropuerto);
 
+
+        conexiones = getIntent().getParcelableArrayListExtra("LISTA_CONEXIONES");
+        if (conexiones == null) {
+            conexiones = new ArrayList<>();
+        }
 
         aeropuertos = new ArrayList<>();
 
@@ -51,21 +72,22 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
     }
 
-    public void regresar(View view){
-
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-
-        startActivity(intent);
+    public void regresar(View view) {
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        setResult(RESULT_OK, resultIntent);
+        finish(); // vuelve a MainActivity existente
     }
 
     public void introAgregarAero(View view){
         Intent intent = new Intent(this, AgregarAeropuerto.class);
-        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-        startActivity(intent);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        intent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        launcherAgregar.launch(intent);
     }
 
-    private void mostrarAeropuertosEnTabla(List<Aeropuerto> aeropuertos) {
+    private void mostrarAeropuertosEnTabla(ArrayList<Aeropuerto> aeropuertos) {
         table.removeAllViews();
 
         TableRow headerRow = new TableRow(this);
@@ -101,18 +123,15 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
             table.addView(dataRow);
         }
+
     }
 
     private void eliminarAeropuerto(Aeropuerto aeropuerto) {
 
         if (this.aeropuertos != null) {
-
             this.aeropuertos.removeIf(a -> a.getCodigo().equals(aeropuerto.getCodigo()));
-
             mostrarAeropuertosEnTabla(this.aeropuertos);
         }
+
     }
-
-
-
 }

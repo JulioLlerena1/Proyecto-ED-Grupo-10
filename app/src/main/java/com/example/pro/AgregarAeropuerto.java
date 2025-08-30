@@ -15,15 +15,21 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 
 public class AgregarAeropuerto extends AppCompatActivity {
 
     private TextInputEditText editTextCodigo, editTextNombre, editTextLatitud, editTextLongitud;
     private Button btnGuardarAeropuerto;
+    private MultiSelectSpinner spinnerConexiones;
 
     private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Conexion> conexiones;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +42,17 @@ public class AgregarAeropuerto extends AppCompatActivity {
         editTextLatitud = findViewById(R.id.editTextLatitudAeropuerto);
         editTextLongitud = findViewById(R.id.editTextLongitudAeropuerto);
         btnGuardarAeropuerto = findViewById(R.id.btnGuardarAeropuerto);
+        spinnerConexiones = findViewById(R.id.spinnerConexiones);
 
         aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
+        conexiones = getIntent().getParcelableArrayListExtra("LISTA_CONEXIONES");
 
+        List<String> nombresAeropuertos = new ArrayList<>();
+        for (Aeropuerto a : aeropuertos) {
+            nombresAeropuertos.add(a.getNombreCompleto() + " (" + a.getCodigo() + ")");
+        }
+        spinnerConexiones.setItems(nombresAeropuertos);
+        spinnerConexiones.setSelection(new int[]{}); // inicialmente vacío
 
     }
 
@@ -50,18 +64,33 @@ public class AgregarAeropuerto extends AppCompatActivity {
         String longitud = editTextLongitud.getText().toString();
 
         Aeropuerto nuevoAeropuerto = new Aeropuerto(codigo, nombre, Double.parseDouble(latitud), Double.parseDouble(longitud));
-
         aeropuertos.add(nuevoAeropuerto);
-        Intent intent = new Intent(this, ConfiguracionAeropuertos.class);
-        intent.putParcelableArrayListExtra("AEROPUERTO_AGREGADO",aeropuertos);
-        startActivity(intent);
 
+        int[] seleccionados = spinnerConexiones.getSelectedIndices();
+        Random random = new Random();
+        for (int index : seleccionados) {
+            Aeropuerto destino = aeropuertos.get(index);
+            if(destino != null){
+                int colorAleatorio = 0xFF000000
+                        | (random.nextInt(256) << 16)
+                        | (random.nextInt(256) << 8)
+                        | random.nextInt(256);
+                conexiones.add(new Conexion(nuevoAeropuerto, destino, colorAleatorio));
+            }
+        }
 
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        setResult(RESULT_OK, resultIntent);
+        finish(); // vuelve a ConfiguracionAeropuertos
     }
 
+
     public void regresar(View view){
-        Intent intent=new Intent(this,ConfiguracionAeropuertos.class);
-        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-        startActivity(intent);
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        setResult(RESULT_OK, resultIntent);
+        finish(); // vuelve a ConfiguracionAeropuertos
     }
 }
