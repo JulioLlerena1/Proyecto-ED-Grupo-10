@@ -37,11 +37,11 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
         aeropuertos = new ArrayList<>();
 
-        aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("AEROPUERTO_AGREGADO");
+        aeropuertos = getIntent().getParcelableArrayListExtra("AEROPUERTO_AGREGADO");
 
         if (aeropuertos == null) {
 
-            aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
+            aeropuertos = getIntent().getParcelableArrayListExtra("LISTA_AEROPUERTOS");
 
         }
 
@@ -53,7 +53,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
     public void regresar(View view){
 
-        Intent intent=new Intent(this,MainActivity.class);
+        Intent intent = new Intent(this,MainActivity.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
 
         startActivity(intent);

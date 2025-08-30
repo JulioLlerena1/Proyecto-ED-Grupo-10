@@ -8,13 +8,18 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 import modelo.Aeropuerto;
 import modelo.Vertex;
+import modelo.Vuelo;
 
 
 public class Estadisticas extends AppCompatActivity {
 
     private TextView tvConexiones, tvMasConectado, tvMenosConectado;
+    private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Vuelo> vuelos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +34,12 @@ public class Estadisticas extends AppCompatActivity {
         tvMenosConectado = findViewById(R.id.textView7);
 
         // Obtener aeropuerto del Intent
-        Aeropuerto aeropuerto = (Aeropuerto) getIntent().getSerializableExtra("aeropuerto");
+        Intent itObjeto = getIntent();
+        Aeropuerto aeropuertoActual = (Aeropuerto) itObjeto.getSerializableExtra("AEROPUERTO_SELECCIONADO");
+        aeropuertos = itObjeto.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+        vuelos = itObjeto.getParcelableArrayListExtra("LISTA_VUELOS");
 
-        mostrarNumeroConexiones(aeropuerto);
+        mostrarNumeroConexiones(aeropuertoActual);
         mostrarAeropuertoMasConectado();
         mostrarAeropuertoMenosConectado();
     }
@@ -77,6 +85,8 @@ public class Estadisticas extends AppCompatActivity {
 
     public void btnVolver(View view){
         Intent intent=new Intent(this, MainActivity.class);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+        intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
         startActivity(intent);
     }
 }

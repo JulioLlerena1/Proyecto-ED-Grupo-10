@@ -34,6 +34,9 @@ public class AeropuertoInfo  extends AppCompatActivity {
     private TableLayout table;
 
     private List<Vuelo> vuelosDelAeropuerto = new ArrayList<>();
+    private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Vuelo> vuelos;
+
     private Aeropuerto aeropuertoActual;
 
     @Override
@@ -47,6 +50,8 @@ public class AeropuertoInfo  extends AppCompatActivity {
 
         Intent itObjeto = getIntent();
         aeropuertoActual = (Aeropuerto) itObjeto.getSerializableExtra("AEROPUERTO_SELECCIONADO");
+        aeropuertos = itObjeto.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+        vuelos = itObjeto.getParcelableArrayListExtra("LISTA_VUELOS");
         nombre.setText(aeropuertoActual.getNombre());
 
         cargarYMostrarVuelos();
@@ -54,12 +59,16 @@ public class AeropuertoInfo  extends AppCompatActivity {
 
     public void regresar(View view){
         Intent intent=new Intent(this,MainActivity.class);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
+        intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
         startActivity(intent);
     }
 
     public void verEstadisticas(View view){
         Intent intent = new Intent(this, Estadisticas.class);
-        intent.putExtra("aeropuerto", (Parcelable) aeropuertoActual);
+        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        intent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        intent.putExtra("AEROPUERTO_SELECCIONADO", (Parcelable) aeropuertoActual);
         startActivity(intent);
     }
 
