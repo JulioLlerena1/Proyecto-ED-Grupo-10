@@ -20,6 +20,7 @@ public class Estadisticas extends AppCompatActivity {
     private TextView tvConexiones, tvMasConectado, tvMenosConectado;
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Vuelo> vuelos;
+    private ArrayList<Vuelo> conexiones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class Estadisticas extends AppCompatActivity {
         Aeropuerto aeropuertoActual = (Aeropuerto) itObjeto.getSerializableExtra("AEROPUERTO_SELECCIONADO");
         aeropuertos = itObjeto.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
         vuelos = itObjeto.getParcelableArrayListExtra("LISTA_VUELOS");
+        conexiones = itObjeto.getParcelableArrayListExtra("LISTA_CONEXIONES");
 
         mostrarNumeroConexiones(aeropuertoActual);
         mostrarAeropuertoMasConectado();
@@ -84,9 +86,10 @@ public class Estadisticas extends AppCompatActivity {
     }
 
     public void btnVolver(View view){
-        Intent intent=new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
+        intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
         startActivity(intent);
     }
 }

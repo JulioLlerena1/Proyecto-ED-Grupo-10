@@ -36,6 +36,9 @@ public class AeropuertoInfo  extends AppCompatActivity {
     private List<Vuelo> vuelosDelAeropuerto = new ArrayList<>();
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Vuelo> vuelos;
+    private ArrayList<Vuelo> conexiones;
+
+
 
     private Aeropuerto aeropuertoActual;
 
@@ -51,6 +54,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
         Intent itObjeto = getIntent();
         aeropuertoActual = (Aeropuerto) itObjeto.getSerializableExtra("AEROPUERTO_SELECCIONADO");
         aeropuertos = itObjeto.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+        conexiones = itObjeto.getParcelableArrayListExtra("LISTA_CONEXIONES");
         vuelos = itObjeto.getParcelableArrayListExtra("LISTA_VUELOS");
         nombre.setText(aeropuertoActual.getNombre());
 
@@ -61,6 +65,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
         setResult(RESULT_OK, resultIntent);
         finish();
     }
@@ -69,6 +74,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
         Intent intent = new Intent(this, Estadisticas.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        intent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
         intent.putExtra("AEROPUERTO_SELECCIONADO", (Parcelable) aeropuertoActual);
         startActivity(intent);
     }
