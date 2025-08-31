@@ -151,8 +151,7 @@ public class AgregarVuelo extends AppCompatActivity {
             return;
         }
 
-        if (com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strHoraInicio) || com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strHoraFin) ||
-                com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strNumPasajeros) || com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strNumAsientos) ||
+        if (strHoraInicio.isEmpty() || strHoraFin.isEmpty() || strNumPasajeros.isEmpty() || strNumAsientos.isEmpty()||
                 spinnerOrigen.getSelectedItemPosition() == Spinner.INVALID_POSITION || // Mejor validación
                 spinnerDestino.getSelectedItemPosition() == Spinner.INVALID_POSITION ) {
 
