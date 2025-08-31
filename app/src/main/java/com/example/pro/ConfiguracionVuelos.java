@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,8 +21,10 @@ import androidx.core.view.WindowInsetsCompat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 import modelo.DynamicGraph;
 import modelo.Vertex;
 import modelo.Vuelo;
@@ -31,6 +35,32 @@ public class ConfiguracionVuelos extends AppCompatActivity {
     private Button agregarVuelo;
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Vuelo> vuelos;
+    private ArrayList<Conexion> conexiones;
+    private Vuelo vueloagg;
+
+    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    vuelos = result.getData().getParcelableArrayListExtra("LISTA_VUELOS");
+                    conexiones = result.getData().getParcelableArrayListExtra("LISTA_CONEXIONES");
+                    vueloagg = (Vuelo) result.getData().getSerializableExtra("VUELO_AGREGADO");
+                    if(vueloagg != null){
+                        vuelos.add(vueloagg);
+
+                        Random random = new Random();
+                        int colorAleatorio = 0xFF000000
+                                | (random.nextInt(256) << 16)
+                                | (random.nextInt(256) << 8)
+                                | random.nextInt(256);
+
+                        conexiones.add(new Conexion(vueloagg.getPartida(), vueloagg.getDestino(),colorAleatorio));
+
+                    }
+                    mostrarVuelos(vuelos);
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +76,7 @@ public class ConfiguracionVuelos extends AppCompatActivity {
 
         vuelos = (ArrayList<Vuelo>) getIntent().getSerializableExtra("VUELO_AGREGADO");
         aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
+        Vuelo vueloagg = (Vuelo) getIntent().getSerializableExtra("VUELO_AGREGADO");
 
 
         if (vuelos == null) {
@@ -60,35 +91,44 @@ public class ConfiguracionVuelos extends AppCompatActivity {
 
         }
 
+        if(vueloagg != null){
+
+            vuelos.add(vueloagg);
+
+        }
+
     }
     public void regresar(View view){
 
-        Intent intent=new Intent(this,MainActivity.class);
-        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-        intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-
-        startActivity(intent);
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     public void introAgregarVuelo(View view){
         Intent intent = new Intent(this, AgregarVuelo.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-        startActivity(intent);
+        launcher.launch(intent);
     }
     private void mostrarVuelos(List<Vuelo> lista) {
         table.removeAllViews();
 
         TableRow header = new TableRow(this);
+        header.addView(crearTextView("Partida", true));
         header.addView(crearTextView("Destino", true));
         header.addView(crearTextView("Hora Salida", true));
         header.addView(crearTextView("Hora Llegada", true));
+        header.addView(crearTextView("Accion", true));
         table.addView(header);
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
         for (Vuelo v : lista) {
             TableRow row = new TableRow(this);
+            row.addView(crearTextView(v.getPartida().getNombre(), false));
             row.addView(crearTextView(v.getDestino().getNombre(), false));
             row.addView(crearTextView(sdf.format(v.getHoraI()), false));
             row.addView(crearTextView(sdf.format(v.getHoraF()), false));
