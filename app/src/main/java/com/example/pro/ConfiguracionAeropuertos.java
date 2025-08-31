@@ -127,11 +127,21 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
     }
 
     private void eliminarAeropuerto(Aeropuerto aeropuerto) {
+        if (aeropuertos != null) {
+            // Eliminar aeropuerto
+            aeropuertos.removeIf(a -> a.getCodigo().equalsIgnoreCase(aeropuerto.getCodigo()));
 
-        if (this.aeropuertos != null) {
-            this.aeropuertos.removeIf(a -> a.getCodigo().equals(aeropuerto.getCodigo()));
-            mostrarAeropuertosEnTabla(this.aeropuertos);
+            // Eliminar todas las conexiones asociadas
+            if (conexiones != null) {
+                conexiones.removeIf(c ->
+                        (c.getOrigen() != null && c.getOrigen().getCodigo().equalsIgnoreCase(aeropuerto.getCodigo()))
+                                || (c.getDestino() != null && c.getDestino().getCodigo().equalsIgnoreCase(aeropuerto.getCodigo()))
+                );
+            }
+
+            // Actualizar tabla
+            mostrarAeropuertosEnTabla(aeropuertos);
         }
-
     }
+
 }

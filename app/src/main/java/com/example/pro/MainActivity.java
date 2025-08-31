@@ -203,8 +203,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void mostrarConexionesEnMapayCreacionGrafo(ArrayList<Conexion> conexiones, ArrayList<Aeropuerto> aeropuertos) {
         graph = new DynamicGraph<>(false);
-        for (Aeropuerto a : aeropuertos) graph.addVertex(a);
 
+        List<Overlay> overlays = new ArrayList<>(mapView.getOverlays());
+        for (Overlay o : overlays) {
+            if (o instanceof Polyline) {
+                mapView.getOverlays().remove(o);
+            }
+        }
+
+        for (Aeropuerto a : aeropuertos) graph.addVertex(a);
         for (Conexion c : conexiones) {
             Aeropuerto origen = c.getOrigen();
             Aeropuerto destino = c.getDestino();
@@ -218,6 +225,8 @@ public class MainActivity extends AppCompatActivity {
             linea.setColor(c.getColor());
             mapView.getOverlays().add(linea);
         }
+        mapView.invalidate();
+
     }
 
     private void mostrarAeropuertosEnMapa(ArrayList<Aeropuerto> aeropuertos) {

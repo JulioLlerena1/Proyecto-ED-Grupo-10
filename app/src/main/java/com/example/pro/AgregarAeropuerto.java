@@ -90,6 +90,7 @@ public class AgregarAeropuerto extends AppCompatActivity {
     public void regresar(View view){
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
         setResult(RESULT_OK, resultIntent);
         finish(); // vuelve a ConfiguracionAeropuertos
     }
