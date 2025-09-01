@@ -44,19 +44,7 @@ public class ConfiguracionVuelos extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     vuelos = result.getData().getParcelableArrayListExtra("LISTA_VUELOS");
                     conexiones = result.getData().getParcelableArrayListExtra("LISTA_CONEXIONES");
-                    vueloagg = (Vuelo) result.getData().getSerializableExtra("VUELO_AGREGADO");
-                    if(vueloagg != null){
-                        vuelos.add(vueloagg);
-
-                        Random random = new Random();
-                        int colorAleatorio = 0xFF000000
-                                | (random.nextInt(256) << 16)
-                                | (random.nextInt(256) << 8)
-                                | random.nextInt(256);
-
-                        conexiones.add(new Conexion(vueloagg.getPartida(), vueloagg.getDestino(),colorAleatorio));
-
-                    }
+                    aeropuertos = result.getData().getParcelableArrayListExtra("LISTA_AEROPUERTOS");
                     mostrarVuelos(vuelos);
                 }
             }
@@ -76,6 +64,7 @@ public class ConfiguracionVuelos extends AppCompatActivity {
 
         vuelos = (ArrayList<Vuelo>) getIntent().getSerializableExtra("VUELO_AGREGADO");
         aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
+        conexiones = (ArrayList<Conexion>) getIntent().getSerializableExtra("LISTA_CONEXIONES");
         Vuelo vueloagg = (Vuelo) getIntent().getSerializableExtra("VUELO_AGREGADO");
 
 
@@ -99,10 +88,10 @@ public class ConfiguracionVuelos extends AppCompatActivity {
 
     }
     public void regresar(View view){
-
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         setResult(RESULT_OK, resultIntent);
         finish();
     }
@@ -111,9 +100,10 @@ public class ConfiguracionVuelos extends AppCompatActivity {
         Intent intent = new Intent(this, AgregarVuelo.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
+        intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
         launcher.launch(intent);
     }
-    private void mostrarVuelos(List<Vuelo> lista) {
+    private void mostrarVuelos(ArrayList<Vuelo> lista) {
         table.removeAllViews();
 
         TableRow header = new TableRow(this);
@@ -142,7 +132,8 @@ public class ConfiguracionVuelos extends AppCompatActivity {
                     intent.putExtra("VUELO_EDIT", v);
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
                     intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-                    startActivity(intent);
+                    intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
+                    launcher.launch(intent);
                 }
             });
 

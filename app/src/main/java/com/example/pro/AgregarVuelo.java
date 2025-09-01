@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 import modelo.Vuelo;
 
 public class AgregarVuelo extends AppCompatActivity {
@@ -38,6 +39,11 @@ public class AgregarVuelo extends AppCompatActivity {
     private Button buttonGuardarVuelo;
 
     private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Conexion> conexiones;
+    private ArrayList<Vuelo> vuelos;
+
+
+
     private static final SimpleDateFormat sdfInputHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     @Override
@@ -72,6 +78,9 @@ public class AgregarVuelo extends AppCompatActivity {
         aeropuertos = new ArrayList<>();
         Intent intent = getIntent();
         aeropuertos = intent.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+        conexiones = intent.getParcelableArrayListExtra("LISTA_CONEXIONES");
+        vuelos = intent.getParcelableArrayListExtra("LISTA_VUELOS");
+
 
         if (aeropuertos.isEmpty()) {
             Toast.makeText(this, "No hay aeropuertos disponibles para seleccionar.", Toast.LENGTH_LONG).show();
@@ -206,12 +215,14 @@ public class AgregarVuelo extends AppCompatActivity {
             return;
         }
 
+
         Vuelo nuevoVuelo = new Vuelo(horaInicioDate, horaFinDate, numPasajeros, numAsientos, aeropuertoDestinoSeleccionado, aeropuertoPartidaSeleccionado);
+        vuelos.add(nuevoVuelo);
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("VUELO_AGREGADO", nuevoVuelo);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         setResult(RESULT_OK, resultIntent);
         finish();
-
-
     }
 }

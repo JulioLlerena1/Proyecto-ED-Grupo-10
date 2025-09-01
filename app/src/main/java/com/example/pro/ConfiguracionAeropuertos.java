@@ -21,6 +21,7 @@ import java.util.List;
 
 import modelo.Aeropuerto;
 import modelo.Conexion;
+import modelo.Vuelo;
 
 public class ConfiguracionAeropuertos extends AppCompatActivity {
 
@@ -28,6 +29,9 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
     private Button agregarAeropuerto;
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Conexion> conexiones;
+    private ArrayList<Vuelo> vuelos;
+
+
 
 
     private ActivityResultLauncher<Intent> launcherAgregar = registerForActivityResult(
@@ -36,6 +40,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     aeropuertos = result.getData().getParcelableArrayListExtra("LISTA_AEROPUERTOS");
                     conexiones = result.getData().getParcelableArrayListExtra("LISTA_CONEXIONES");
+                    vuelos = result.getData().getParcelableArrayListExtra("LISTA_VUELOS");
                     mostrarAeropuertosEnTabla(aeropuertos);
                 }
             }
@@ -59,6 +64,8 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
         aeropuertos = new ArrayList<>();
 
         aeropuertos = getIntent().getParcelableArrayListExtra("AEROPUERTO_AGREGADO");
+        vuelos = getIntent().getParcelableArrayListExtra("LISTA_VUELOS");
+
 
         if (aeropuertos == null) {
 
@@ -76,6 +83,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         setResult(RESULT_OK, resultIntent);
         finish(); // vuelve a MainActivity existente
     }
@@ -84,6 +92,7 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
         Intent intent = new Intent(this, AgregarAeropuerto.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        intent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         launcherAgregar.launch(intent);
     }
 

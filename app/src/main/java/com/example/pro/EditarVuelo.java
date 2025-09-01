@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 import modelo.Vuelo;
 
 public class EditarVuelo extends AppCompatActivity {
@@ -38,6 +39,11 @@ public class EditarVuelo extends AppCompatActivity {
     private Button buttonGuardarVuelo;
 
     private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Vuelo> vuelos;
+    private ArrayList<Conexion> conexiones;
+    private Vuelo vueloAEditar;
+
+
     private static final SimpleDateFormat sdfInputHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     @Override
@@ -58,32 +64,71 @@ public class EditarVuelo extends AppCompatActivity {
         });
 
 
-        editTextHoraInicio = findViewById(R.id.edit_text_hora_salida); // Asume estos IDs en tu XML
-        editTextHoraFin = findViewById(R.id.edit_text_hora_llegada);
-        layoutNumPasajeros = findViewById(R.id.layout_num_pasajeros); // ID de ejemplo
-        editTextNumPasajeros = findViewById(R.id.edit_text_num_pasajeros);
-        layoutNumAsientos = findViewById(R.id.layout_num_asientos); // ID de ejemplo
-        editTextNumAsientos = findViewById(R.id.edit_text_num_asientos);
+        editTextHoraInicio = findViewById(R.id.edit_text_hora_inicio_editar);
+        editTextHoraFin = findViewById(R.id.edit_text_hora_fin_editar);
+        layoutNumPasajeros = findViewById(R.id.layout_num_pasajeros_editar);
+        editTextNumPasajeros = findViewById(R.id.edit_text_num_pasajeros_editar);
+        layoutNumAsientos = findViewById(R.id.layout_num_asientos_editar);
+        editTextNumAsientos = findViewById(R.id.edit_text_num_asientos_editar);
 
-        spinnerOrigen = findViewById(R.id.spinner_aeropuerto_origen);
-        spinnerDestino = findViewById(R.id.spinner_aeropuerto_destino);
-        buttonGuardarVuelo = findViewById(R.id.button_guardar_vuelo);
+        spinnerOrigen = findViewById(R.id.spinner_aeropuerto_origen_editar);
+        spinnerDestino = findViewById(R.id.spinner_aeropuerto_destino_editar);
+        buttonGuardarVuelo = findViewById(R.id.button_actualizar_vuelo);
 
         aeropuertos = new ArrayList<>();
         Intent intent = getIntent();
         aeropuertos = intent.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+        vuelos = intent.getParcelableArrayListExtra("LISTA_VUELOS");
+        conexiones = intent.getParcelableArrayListExtra("LISTA_CONEXIONES");
+        vueloAEditar = intent.getParcelableExtra("VUELO_EDIT");
+
 
         if (aeropuertos.isEmpty()) {
             Toast.makeText(this, "No hay aeropuertos disponibles para seleccionar.", Toast.LENGTH_LONG).show();
         }
 
         configurarSpinnersAeropuerto();
+        precargarDatosDelVuelo();
 
         editTextHoraInicio.setOnClickListener(v -> mostrarTimePickerDialog(editTextHoraInicio));
         editTextHoraFin.setOnClickListener(v -> mostrarTimePickerDialog(editTextHoraFin));
 
         buttonGuardarVuelo.setOnClickListener(v -> guardarVuelo());
 
+    }
+
+    private void precargarDatosDelVuelo() {
+        if (vueloAEditar == null) return;
+
+        if (vueloAEditar.getHoraI() != null) {
+            editTextHoraInicio.setText(sdfInputHora.format(vueloAEditar.getHoraI()));
+        }
+        if (vueloAEditar.getHoraF() != null) {
+            editTextHoraFin.setText(sdfInputHora.format(vueloAEditar.getHoraF()));
+        }
+        editTextNumPasajeros.setText(String.valueOf(vueloAEditar.getNumPasajeros()));
+        editTextNumAsientos.setText(String.valueOf(vueloAEditar.getNumPasajeros()));
+
+        if (vueloAEditar.getPartida() != null) {
+            int posicionOrigen = encontrarPosicionAeropuertoEnLista(vueloAEditar.getPartida());
+            spinnerOrigen.setSelection(posicionOrigen);
+
+        }
+        if (vueloAEditar.getDestino() != null) {
+            int posicionDestino = encontrarPosicionAeropuertoEnLista(vueloAEditar.getDestino());
+            spinnerDestino.setSelection(posicionDestino);
+
+        }
+    }
+
+    private int encontrarPosicionAeropuertoEnLista(Aeropuerto aeropuertoBuscado) {
+        if (aeropuertoBuscado == null || aeropuertos == null) return -1;
+        for (int i = 0; i < aeropuertos.size(); i++) {
+            if (aeropuertos.get(i).getCodigo().equals(aeropuertoBuscado.getCodigo())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void mostrarTimePickerDialog(TextInputEditText editTextTime) {
@@ -97,16 +142,17 @@ public class EditarVuelo extends AppCompatActivity {
         minutoActual = calExistente.get(Calendar.MINUTE);
 
 
-
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, hourOfDay, minute) -> {
                     Calendar calSeleccionado = Calendar.getInstance();
                     calSeleccionado.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     calSeleccionado.set(Calendar.MINUTE, minute);
                     editTextTime.setText(sdfInputHora.format(calSeleccionado.getTime()));
-                }, horaActual, minutoActual, true); // true para formato de 24 horas
+                }, horaActual, minutoActual, true);
         timePickerDialog.show();
     }
+
+
 
     private void configurarSpinnersAeropuerto() {
         if (aeropuertos == null || aeropuertos.isEmpty()) {
@@ -151,8 +197,7 @@ public class EditarVuelo extends AppCompatActivity {
             return;
         }
 
-        if (com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strHoraInicio) || com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strHoraFin) ||
-                com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strNumPasajeros) || com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.TextUtils.isEmpty(strNumAsientos) ||
+        if (strHoraInicio.isEmpty() || strHoraFin.isEmpty() || strNumPasajeros.isEmpty() || strNumAsientos.isEmpty()||
                 spinnerOrigen.getSelectedItemPosition() == Spinner.INVALID_POSITION || // Mejor validación
                 spinnerDestino.getSelectedItemPosition() == Spinner.INVALID_POSITION ) {
 
@@ -209,10 +254,18 @@ public class EditarVuelo extends AppCompatActivity {
 
         Vuelo nuevoVuelo = new Vuelo(horaInicioDate, horaFinDate, numPasajeros, numAsientos, aeropuertoDestinoSeleccionado, aeropuertoPartidaSeleccionado);
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("VUELO_AGREGADO", nuevoVuelo);
+
+        int index = vuelos.indexOf(vueloAEditar);
+        if (index != -1) {
+            vuelos.set(index, nuevoVuelo);
+        } else {
+            vuelos.add(nuevoVuelo);
+        }
+
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         setResult(RESULT_OK, resultIntent);
         finish();
-
-
     }
 }

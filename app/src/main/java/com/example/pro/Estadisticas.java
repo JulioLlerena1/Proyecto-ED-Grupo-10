@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 import modelo.Vertex;
 import modelo.Vuelo;
 
@@ -20,7 +21,7 @@ public class Estadisticas extends AppCompatActivity {
     private TextView tvConexiones, tvMasConectado, tvMenosConectado;
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Vuelo> vuelos;
-    private ArrayList<Vuelo> conexiones;
+    private ArrayList<Conexion> conexiones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +87,11 @@ public class Estadisticas extends AppCompatActivity {
     }
 
     public void btnVolver(View view){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-        intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-        intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
-        startActivity(intent);
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 }

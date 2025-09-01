@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
                     if (data != null) {
                         aeropuertos = data.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
                         conexiones = data.getParcelableArrayListExtra("LISTA_CONEXIONES");
-                        mostrarAeropuertosEnMapa(aeropuertos); // actualiza el mapa con la lista modificada
+                        vuelos = data.getParcelableArrayListExtra("LISTA_VUELOS");
+                        mostrarAeropuertosEnMapa(aeropuertos, vuelos);
                         mostrarConexionesEnMapayCreacionGrafo(conexiones,aeropuertos);
                     }
                 }
@@ -154,7 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
                     intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-                    startActivity(intent);
+                    intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
+                    launcher.launch(intent);
 
                 } else if (id == R.id.nav_item_two) {
 
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
                     intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
-
+                    intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
                     launcher.launch(intent);
 
                 } else if (id == R.id.nav_send) {
@@ -170,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
                     intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
-                    startActivity(intent);
+                    intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
+                    launcher.launch(intent);
 
                 }
                 drawerLayout.closeDrawers(); // Cierra el drawer después de la selección
@@ -197,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mostrarConexionesEnMapayCreacionGrafo(conexiones,aeropuertos);
-        mostrarAeropuertosEnMapa(aeropuertos);
+        mostrarAeropuertosEnMapa(aeropuertos,vuelos);
 
     }
 
@@ -229,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void mostrarAeropuertosEnMapa(ArrayList<Aeropuerto> aeropuertos) {
+    private void mostrarAeropuertosEnMapa(ArrayList<Aeropuerto> aeropuertos, ArrayList<Vuelo> vuelos) {
         List<Overlay> overlays = mapView.getOverlays();
         overlays.removeIf(o -> o instanceof Marker);
         for (Aeropuerto a : aeropuertos) {
@@ -238,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setTitle(a.getNombreCompleto());
             marker.setOnMarkerClickListener((m, map) -> {
-                mostrarInformacionAeropuerto(a);
+                mostrarInformacionAeropuerto(a, aeropuertos, vuelos);
                 return true;
             });
             mapView.getOverlays().add(marker);
@@ -247,12 +250,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto) {
+    private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto, ArrayList<Aeropuerto> aeropuertos, ArrayList<Vuelo> vuelos) {
         Intent intent = new Intent(this, AeropuertoInfo.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
         intent.putExtra("AEROPUERTO_SELECCIONADO",(Serializable) aeropuerto);
-        startActivity(intent);
+        intent.putParcelableArrayListExtra("LISTA_CONEXIONES",conexiones);
+        launcher.launch(intent);
     }
 
 

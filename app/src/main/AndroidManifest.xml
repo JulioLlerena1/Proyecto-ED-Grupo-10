@@ -29,9 +29,6 @@
             android:name=".AgregarAeropuerto"
             android:exported="false" />
         <activity
-            android:name=".BuscarRutas"
-            android:exported="false" />
-        <activity
             android:name=".ConfiguracionVuelos"
             android:exported="false" />
         <activity

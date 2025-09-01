@@ -16,6 +16,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Vuelo implements Parcelable {
 
@@ -174,5 +175,20 @@ public class Vuelo implements Parcelable {
             return new Vuelo[size];
         }
     };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Vuelo vuelo = (Vuelo) obj;
+        return partida.getCodigo().equals(vuelo.partida.getCodigo()) &&
+                destino.getCodigo().equals(vuelo.destino.getCodigo()) &&
+                horaI.equals(vuelo.horaI);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(partida.getCodigo(), destino.getCodigo(), horaI);
+    }
 
 }

@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
 import modelo.DynamicGraph;
 import modelo.Vertex;
 import modelo.Vuelo;
@@ -36,11 +39,33 @@ public class AeropuertoInfo  extends AppCompatActivity {
     private List<Vuelo> vuelosDelAeropuerto = new ArrayList<>();
     private ArrayList<Aeropuerto> aeropuertos;
     private ArrayList<Vuelo> vuelos;
-    private ArrayList<Vuelo> conexiones;
+    private ArrayList<Conexion> conexiones;
 
 
 
     private Aeropuerto aeropuertoActual;
+
+    private ActivityResultLauncher<Intent> launcherEstadisticas = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        // Recuperar la información actualizada desde Estadisticas
+                        ArrayList<Aeropuerto> nuevosAeropuertos = data.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+                        ArrayList<Vuelo> nuevosVuelos = data.getParcelableArrayListExtra("LISTA_VUELOS");
+                        ArrayList<Conexion> nuevasConexiones = data.getParcelableArrayListExtra("LISTA_CONEXIONES");
+
+                        if (nuevosAeropuertos != null) aeropuertos = nuevosAeropuertos;
+                        if (nuevosVuelos != null) vuelos = nuevosVuelos;
+                        if (nuevasConexiones != null) conexiones = nuevasConexiones;
+
+                        cargarYMostrarVuelos(vuelos);
+                    }
+                }
+            }
+    );
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +83,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
         vuelos = itObjeto.getParcelableArrayListExtra("LISTA_VUELOS");
         nombre.setText(aeropuertoActual.getNombre());
 
-        cargarYMostrarVuelos();
+        cargarYMostrarVuelos(vuelos);
     }
 
     public void regresar(View view){
@@ -76,28 +101,11 @@ public class AeropuertoInfo  extends AppCompatActivity {
         intent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         intent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
         intent.putExtra("AEROPUERTO_SELECCIONADO", (Parcelable) aeropuertoActual);
-        startActivity(intent);
+        launcherEstadisticas.launch(intent);
     }
 
 
-    private void cargarYMostrarVuelos() {
-        // Cargar todos los aeropuertos
-        List<Aeropuerto> aeropuertos = new ArrayList<>();
-        try {
-            aeropuertos = Aeropuerto.cargarAeropuertos(this); // Método que carga todos los aeropuertos
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        // Cargar todos los vuelos
-        List<Vuelo> todosVuelos = new ArrayList<>();
-        try {
-            todosVuelos = Vuelo.cargarVuelos(this, aeropuertos);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
+    private void cargarYMostrarVuelos(ArrayList<Vuelo> todosVuelos) {
 
         // Filtrar solo los vuelos del aeropuerto actual
         vuelosDelAeropuerto.clear();
@@ -106,7 +114,6 @@ public class AeropuertoInfo  extends AppCompatActivity {
                 vuelosDelAeropuerto.add(v);
             }
         }
-
         // Mostrar sin ordenar
         mostrarVuelos(vuelosDelAeropuerto);
     }

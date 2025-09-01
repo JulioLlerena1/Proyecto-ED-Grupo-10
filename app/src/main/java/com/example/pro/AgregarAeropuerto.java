@@ -20,6 +20,7 @@ import java.util.Random;
 
 import modelo.Aeropuerto;
 import modelo.Conexion;
+import modelo.Vuelo;
 
 public class AgregarAeropuerto extends AppCompatActivity {
 
@@ -28,7 +29,9 @@ public class AgregarAeropuerto extends AppCompatActivity {
     private MultiSelectSpinner spinnerConexiones;
 
     private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Vuelo> vuelos;
     private ArrayList<Conexion> conexiones;
+
 
 
     @Override
@@ -46,6 +49,7 @@ public class AgregarAeropuerto extends AppCompatActivity {
 
         aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
         conexiones = getIntent().getParcelableArrayListExtra("LISTA_CONEXIONES");
+        vuelos = getIntent().getParcelableArrayListExtra("LISTA_VUELOS");
 
         List<String> nombresAeropuertos = new ArrayList<>();
         for (Aeropuerto a : aeropuertos) {
@@ -82,6 +86,7 @@ public class AgregarAeropuerto extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         setResult(RESULT_OK, resultIntent);
         finish(); // vuelve a ConfiguracionAeropuertos
     }
@@ -91,6 +96,7 @@ public class AgregarAeropuerto extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
         resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         setResult(RESULT_OK, resultIntent);
         finish(); // vuelve a ConfiguracionAeropuertos
     }
