@@ -115,13 +115,26 @@ public class ConfiguracionAeropuertos extends AppCompatActivity {
 
         for (Aeropuerto aeropuerto : aeropuertos) {
             TableRow dataRow = new TableRow(this);
+
             TextView nombreTextView = new TextView(this);
             nombreTextView.setText(aeropuerto.getNombre());
-            nombreTextView.setPadding(8, 8, 8, 8);
+            nombreTextView.setPadding(16, 16, 16, 16);
+
+            // Que el TextView ocupe todo el espacio disponible
+            TableRow.LayoutParams nombreParams = new TableRow.LayoutParams(
+                    0, // ancho 0 porque usaremos peso
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    1f // peso 1 para ocupar espacio restante
+            );
+
+            nombreTextView.setLayoutParams(nombreParams);
             dataRow.addView(nombreTextView);
 
             Button botonEliminar = new Button(this);
             botonEliminar.setText("Eliminar");
+
+            botonEliminar.setPadding(16, 16, 16, 16);
+
             botonEliminar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
