@@ -58,11 +58,11 @@ public class AgregarVuelo extends AppCompatActivity {
         });
 
 
-        editTextHoraInicio = findViewById(R.id.edit_text_hora_salida); // Asume estos IDs en tu XML
+        editTextHoraInicio = findViewById(R.id.edit_text_hora_salida);
         editTextHoraFin = findViewById(R.id.edit_text_hora_llegada);
-        layoutNumPasajeros = findViewById(R.id.layout_num_pasajeros); // ID de ejemplo
+        layoutNumPasajeros = findViewById(R.id.layout_num_pasajeros);
         editTextNumPasajeros = findViewById(R.id.edit_text_num_pasajeros);
-        layoutNumAsientos = findViewById(R.id.layout_num_asientos); // ID de ejemplo
+        layoutNumAsientos = findViewById(R.id.layout_num_asientos);
         editTextNumAsientos = findViewById(R.id.edit_text_num_asientos);
 
         spinnerOrigen = findViewById(R.id.spinner_aeropuerto_origen);
@@ -104,7 +104,7 @@ public class AgregarVuelo extends AppCompatActivity {
                     calSeleccionado.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     calSeleccionado.set(Calendar.MINUTE, minute);
                     editTextTime.setText(sdfInputHora.format(calSeleccionado.getTime()));
-                }, horaActual, minutoActual, true); // true para formato de 24 horas
+                }, horaActual, minutoActual, true);
         timePickerDialog.show();
     }
 
@@ -128,7 +128,7 @@ public class AgregarVuelo extends AppCompatActivity {
 
         ArrayAdapter<String> adapterAeropuertos = new ArrayAdapter<>(
                 this,
-                android.R.layout.simple_spinner_item, // Layout estándar para el ítem seleccionado
+                android.R.layout.simple_spinner_item,
                 nombresAeropuertos
         );
 
@@ -152,7 +152,7 @@ public class AgregarVuelo extends AppCompatActivity {
         }
 
         if (strHoraInicio.isEmpty() || strHoraFin.isEmpty() || strNumPasajeros.isEmpty() || strNumAsientos.isEmpty()||
-                spinnerOrigen.getSelectedItemPosition() == Spinner.INVALID_POSITION || // Mejor validación
+                spinnerOrigen.getSelectedItemPosition() == Spinner.INVALID_POSITION ||
                 spinnerDestino.getSelectedItemPosition() == Spinner.INVALID_POSITION ) {
 
             Toast.makeText(this, "Por favor, complete todos los campos y seleccione aeropuertos.", Toast.LENGTH_SHORT).show();
@@ -168,7 +168,7 @@ public class AgregarVuelo extends AppCompatActivity {
             return;
         }
 
-        if (horaInicioDate == null || horaFinDate == null) { // Debería ser redundante por el try-catch
+        if (horaInicioDate == null || horaFinDate == null) {
             Toast.makeText(this, "Error al procesar las horas.", Toast.LENGTH_SHORT).show();
             return;
         }

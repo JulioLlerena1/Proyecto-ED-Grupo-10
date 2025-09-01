@@ -37,6 +37,7 @@ public class ConfiguracionVuelos extends AppCompatActivity {
     private ArrayList<Vuelo> vuelos;
     private ArrayList<Conexion> conexiones;
     private Vuelo vueloagg;
+    private ArrayList<Vuelo> vueloedit;
 
     private ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -45,6 +46,7 @@ public class ConfiguracionVuelos extends AppCompatActivity {
                     vuelos = result.getData().getParcelableArrayListExtra("LISTA_VUELOS");
                     conexiones = result.getData().getParcelableArrayListExtra("LISTA_CONEXIONES");
                     vueloagg = (Vuelo) result.getData().getSerializableExtra("VUELO_AGREGADO");
+                    vueloedit = result.getData().getParcelableArrayListExtra("VUELO_EDITADO");
                     if(vueloagg != null){
                         vuelos.add(vueloagg);
 
@@ -55,6 +57,22 @@ public class ConfiguracionVuelos extends AppCompatActivity {
                                 | random.nextInt(256);
 
                         conexiones.add(new Conexion(vueloagg.getPartida(), vueloagg.getDestino(),colorAleatorio));
+
+                    }
+
+                    if(vueloedit != null ){
+
+                        vuelos.removeIf(a -> a.equals(vueloedit.get(1)));
+
+                        vuelos.add(vueloedit.get(0));
+
+                        Random random = new Random();
+                        int colorAleatorio = 0xFF000000
+                                | (random.nextInt(256) << 16)
+                                | (random.nextInt(256) << 8)
+                                | random.nextInt(256);
+
+                        conexiones.add(new Conexion(vueloedit.get(0).getPartida(), vueloedit.get(0).getDestino(),colorAleatorio));
 
                     }
                     mostrarVuelos(vuelos);
@@ -113,6 +131,7 @@ public class ConfiguracionVuelos extends AppCompatActivity {
         intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
         launcher.launch(intent);
     }
+
     private void mostrarVuelos(List<Vuelo> lista) {
         table.removeAllViews();
 
@@ -139,9 +158,8 @@ public class ConfiguracionVuelos extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(ConfiguracionVuelos.this, EditarVuelo.class);
-                    intent.putExtra("VUELO_EDIT", v);
+                    intent.putExtra("VUELO_EDITADO", v);
                     intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
-                    intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);
                     startActivity(intent);
                 }
             });
