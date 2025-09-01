@@ -218,6 +218,7 @@ public class AgregarVuelo extends AppCompatActivity {
 
         Vuelo nuevoVuelo = new Vuelo(horaInicioDate, horaFinDate, numPasajeros, numAsientos, aeropuertoDestinoSeleccionado, aeropuertoPartidaSeleccionado);
         vuelos.add(nuevoVuelo);
+
         Intent resultIntent = new Intent();
         resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
         resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);

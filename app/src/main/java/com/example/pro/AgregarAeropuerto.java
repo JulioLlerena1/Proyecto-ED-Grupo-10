@@ -47,7 +47,7 @@ public class AgregarAeropuerto extends AppCompatActivity {
         btnGuardarAeropuerto = findViewById(R.id.btnGuardarAeropuerto);
         spinnerConexiones = findViewById(R.id.spinnerConexiones);
 
-        aeropuertos = (ArrayList<Aeropuerto>) getIntent().getSerializableExtra("LISTA_AEROPUERTOS");
+        aeropuertos = getIntent().getParcelableArrayListExtra("LISTA_AEROPUERTOS");
         conexiones = getIntent().getParcelableArrayListExtra("LISTA_CONEXIONES");
         vuelos = getIntent().getParcelableArrayListExtra("LISTA_VUELOS");
 

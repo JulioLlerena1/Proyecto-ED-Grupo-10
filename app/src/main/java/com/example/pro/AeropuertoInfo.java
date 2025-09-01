@@ -148,7 +148,7 @@ public class AeropuertoInfo  extends AppCompatActivity {
                     Aeropuerto origen = vueloSeleccionado.getPartida();
                     Aeropuerto destino = vueloSeleccionado.getDestino();
 
-                    DynamicGraph grafo = MainActivity.graph;
+                    DynamicGraph<Aeropuerto, Double> grafo = MainActivity.crearGrafo(aeropuertos, conexiones, false);
                     List<Vertex<Aeropuerto, Double>> camino = grafo.dijkstra(origen, destino);
 
                     if (camino.isEmpty()) {
@@ -161,9 +161,13 @@ public class AeropuertoInfo  extends AppCompatActivity {
                         codigosRuta.add(v.getValue().getCodigo());
                     }
 
-                    Intent intent = new Intent(AeropuertoInfo.this, RutaCorta.class);
-                    intent.putStringArrayListExtra("ruta", codigosRuta);
-                    startActivity(intent);
+                    Intent resultIntent = new Intent(AeropuertoInfo.this, RutaCorta.class);
+                    resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+                    resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+                    resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+                    resultIntent.putStringArrayListExtra("ruta", codigosRuta);
+                    launcherEstadisticas.launch(resultIntent);
+
                 }
             });
             table.addView(row);

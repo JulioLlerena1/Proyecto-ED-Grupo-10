@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         aeropuertos = data.getParcelableArrayListExtra("LISTA_AEROPUERTOS");
                         conexiones = data.getParcelableArrayListExtra("LISTA_CONEXIONES");
                         vuelos = data.getParcelableArrayListExtra("LISTA_VUELOS");
-                        mostrarAeropuertosEnMapa(aeropuertos, vuelos);
+                        mostrarAeropuertosEnMapa(aeropuertos, vuelos, conexiones);
                         mostrarConexionesEnMapayCreacionGrafo(conexiones,aeropuertos);
                     }
                 }
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mostrarConexionesEnMapayCreacionGrafo(conexiones,aeropuertos);
-        mostrarAeropuertosEnMapa(aeropuertos,vuelos);
+        mostrarAeropuertosEnMapa(aeropuertos,vuelos, conexiones);
 
     }
 
@@ -232,7 +232,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void mostrarAeropuertosEnMapa(ArrayList<Aeropuerto> aeropuertos, ArrayList<Vuelo> vuelos) {
+    public static DynamicGraph<Aeropuerto, Double> crearGrafo(
+            ArrayList<Aeropuerto> aeropuertos,
+            ArrayList<Conexion> conexiones,
+            boolean dirigido) {
+
+        DynamicGraph<Aeropuerto, Double> grafo = new DynamicGraph<>(dirigido);
+
+        // Agregar vertices (aeropuertos)
+        for (Aeropuerto a : aeropuertos) {
+            grafo.addVertex(a);
+        }
+
+        // Agregar aristas (conexiones)
+        for (Conexion c : conexiones) {
+            Aeropuerto origen = c.getOrigen();
+            Aeropuerto destino = c.getDestino();
+            double distancia = c.getDistanciaKm();
+
+            grafo.connect(origen, destino, distancia);
+        }
+
+        return grafo;
+    }
+
+    private void mostrarAeropuertosEnMapa(ArrayList<Aeropuerto> aeropuertos, ArrayList<Vuelo> vuelos, ArrayList<Conexion> conexiones) {
         List<Overlay> overlays = mapView.getOverlays();
         overlays.removeIf(o -> o instanceof Marker);
         for (Aeropuerto a : aeropuertos) {
@@ -241,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setTitle(a.getNombreCompleto());
             marker.setOnMarkerClickListener((m, map) -> {
-                mostrarInformacionAeropuerto(a, aeropuertos, vuelos);
+                mostrarInformacionAeropuerto(a, aeropuertos, vuelos, conexiones);
                 return true;
             });
             mapView.getOverlays().add(marker);
@@ -250,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto, ArrayList<Aeropuerto> aeropuertos, ArrayList<Vuelo> vuelos) {
+    private void mostrarInformacionAeropuerto(Aeropuerto aeropuerto, ArrayList<Aeropuerto> aeropuertos, ArrayList<Vuelo> vuelos, ArrayList<Conexion> conexiones) {
         Intent intent = new Intent(this, AeropuertoInfo.class);
         intent.putParcelableArrayListExtra("LISTA_AEROPUERTOS",aeropuertos);
         intent.putParcelableArrayListExtra("LISTA_VUELOS",vuelos);

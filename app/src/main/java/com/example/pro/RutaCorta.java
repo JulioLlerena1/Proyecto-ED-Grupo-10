@@ -19,10 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import modelo.Aeropuerto;
+import modelo.Conexion;
+import modelo.Vuelo;
 
 public class RutaCorta extends AppCompatActivity {
 
     private MapView mapViewSecundario;
+    private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<Vuelo> vuelos;
+    private ArrayList<Conexion> conexiones;
+
 
 
     @Override
@@ -40,6 +46,10 @@ public class RutaCorta extends AppCompatActivity {
 
         setContentView(R.layout.ruta_corta);
 
+        aeropuertos = getIntent().getParcelableArrayListExtra("LISTA_AEROPUERTOS");
+        conexiones = getIntent().getParcelableArrayListExtra("LISTA_CONEXIONES");
+        vuelos = getIntent().getParcelableArrayListExtra("LISTA_VUELOS");
+
         // Vincular el MapView
         mapViewSecundario = findViewById(R.id.mapViewRutaCorta);
         mapViewSecundario.setMultiTouchControls(true);
@@ -47,18 +57,15 @@ public class RutaCorta extends AppCompatActivity {
         ArrayList<String> codigosRuta = getIntent().getStringArrayListExtra("ruta");
 
         List<Aeropuerto> rutaAeropuertos = new ArrayList<>();
-        try {
-            List<Aeropuerto> todosAeropuertos = Aeropuerto.cargarAeropuertos(this);
-            for (String codigo : codigosRuta) {
-                for (Aeropuerto a : todosAeropuertos) {
-                    if (a.getCodigo().equalsIgnoreCase(codigo)) {
-                        rutaAeropuertos.add(a);
-                        break;
-                    }
+
+
+        for (String codigo : codigosRuta) {
+            for (Aeropuerto a : aeropuertos) {
+                if (a.getCodigo().equalsIgnoreCase(codigo)) {
+                    rutaAeropuertos.add(a);
+                    break;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         List<GeoPoint> puntos = new ArrayList<>();
@@ -103,9 +110,12 @@ public class RutaCorta extends AppCompatActivity {
     }
 
     public void volver(View view){
-        Intent intent=new Intent(this,MainActivity.class);
-        startActivity(intent);
-
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("LISTA_AEROPUERTOS", aeropuertos);
+        resultIntent.putParcelableArrayListExtra("LISTA_VUELOS", vuelos);
+        resultIntent.putParcelableArrayListExtra("LISTA_CONEXIONES", conexiones);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
 }
